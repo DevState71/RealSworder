@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "FormationTrapPlate.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class SWORDER_API AFormationTrapPlate : public AActor
 {
