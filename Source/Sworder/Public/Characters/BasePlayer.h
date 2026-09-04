@@ -53,4 +53,11 @@ protected:
 
 	void InputLook(const FInputActionValue& Value);
 
+	// Attack
+	// Movement
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
+	class UInputAction* Input_Attack;
+
+	void InputAttack(const FInputActionValue& Value);
+
 };

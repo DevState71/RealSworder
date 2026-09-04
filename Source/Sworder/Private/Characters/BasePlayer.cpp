@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InputAction.h"
+#include "Utility/GamePlayerController.h"
 
 
 // Sets default values
@@ -65,6 +66,7 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		// Movement Inputs
 		enhancedInputComponent->BindAction(Input_Move, ETriggerEvent::Triggered, this, &ABasePlayer::InputMove);
 		enhancedInputComponent->BindAction(Input_Look, ETriggerEvent::Triggered, this, &ABasePlayer::InputLook);
+		enhancedInputComponent->BindAction(Input_Attack, ETriggerEvent::Triggered, this, &ABasePlayer::InputAttack);
 	}
 
 }
@@ -85,7 +87,17 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 	const FVector2D look = Value.Get<FVector2D>();
 	AddControllerYawInput(look.X);
 	AddControllerPitchInput(look.Y);
+}
 
-	
+void ABasePlayer::InputAttack(const FInputActionValue& Value)
+{
+	AGamePlayerController* PlayerController = Cast<AGamePlayerController>(GetController());
+	if (PlayerController) {
+		FVector MouseWorldPos;
+		PlayerController->GetMouseWorldPosition(MouseWorldPos);
+		FVector MouseDirection = MouseWorldPos - GetActorLocation();
+		MouseDirection.Z = 0;
+		SetActorRotation(MouseDirection.Rotation());
+	}
 }
 
