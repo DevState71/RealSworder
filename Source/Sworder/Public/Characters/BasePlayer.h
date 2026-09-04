@@ -51,6 +51,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	class UInputAction* Input_Look;
 
-	//void InputLook(const FInputActionValue& Value);
+	void InputLook(const FInputActionValue& Value);
 
 };

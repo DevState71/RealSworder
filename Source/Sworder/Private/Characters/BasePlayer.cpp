@@ -19,14 +19,15 @@ ABasePlayer::ABasePlayer()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(FName("SpringArm"));
 	SpringArm->SetupAttachment(GetRootComponent());
+	SpringArm->bInheritPitch = false;
+	SpringArm->bInheritRoll = false;
+	SpringArm->bInheritYaw = false;
 
 	PlayerCamera = CreateDefaultSubobject<UCameraComponent>(FName("PlayerCamera"));
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeLocation(FVector(300, 13, 1000));
-	//PlayerCamera->SetRelativeRotation(FQuat(FRotator(0, -90, 0)));
 	PlayerCamera->SetRelativeRotation(FRotator(-90, 0, 0));
 
-	//SpringArm->bUsePawnControlRotation = true;
 
 }
 
@@ -34,6 +35,7 @@ ABasePlayer::ABasePlayer()
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	
 }
 
@@ -62,7 +64,7 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		// Movement Inputs
 		enhancedInputComponent->BindAction(Input_Move, ETriggerEvent::Triggered, this, &ABasePlayer::InputMove);
-		//enhancedInputComponent->BindAction(Input_Look, ETriggerEvent::Triggered, this, &ABasePlayer::InputLook);
+		enhancedInputComponent->BindAction(Input_Look, ETriggerEvent::Triggered, this, &ABasePlayer::InputLook);
 	}
 
 }
@@ -70,10 +72,20 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void ABasePlayer::InputMove(const FInputActionValue& Value)
 {
 	const FVector2D movement = Value.Get<FVector2D>();
-	const FRotator moveRotation(0.0f, Controller->GetControlRotation().Yaw, 0.0f);
+	const FRotator moveRotation(0.0f, PlayerCamera->GetRelativeRotation().Yaw, 0.0f);
 
 
-	AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetScaledAxis(EAxis::Y), movement.X);
-	AddMovementInput(FRotator(0.0f, GetControlRotation().Yaw, 0.0f).Vector(), movement.Y);
+	AddMovementInput(FRotationMatrix(moveRotation).GetScaledAxis(EAxis::Y), movement.X);
+	AddMovementInput(moveRotation.Vector(), movement.Y);
+
+}
+
+void ABasePlayer::InputLook(const FInputActionValue& Value)
+{
+	const FVector2D look = Value.Get<FVector2D>();
+	AddControllerYawInput(look.X);
+	AddControllerPitchInput(look.Y);
+
+	
 }
 
