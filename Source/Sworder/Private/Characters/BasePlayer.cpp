@@ -29,6 +29,9 @@ ABasePlayer::ABasePlayer()
 	PlayerCamera->SetRelativeLocation(FVector(300, 13, 1000));
 	PlayerCamera->SetRelativeRotation(FRotator(-90, 0, 0));
 
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
 
 }
 
