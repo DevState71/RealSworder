@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "FormationTrapPlate.h"
+#include "GAFretter/FormationTrapPlate.h"
 #include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
 #include "Math/UnrealMathUtility.h"
