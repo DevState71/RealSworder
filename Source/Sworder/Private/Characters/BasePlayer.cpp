@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InputAction.h"
 #include "Utility/GamePlayerController.h"
+#include "Animations/PlayerAnimInstance.h"
 
 
 // Sets default values
@@ -43,7 +44,11 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AnimInstance)
+	{
+		AttackStarted.AddDynamic(AnimInstance, &UPlayerAnimInstance::AttackAnimation);
+	}
 }
 
 // Called every frame
@@ -109,5 +114,7 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		MouseDirection.Z = 0;
 		SetActorRotation(MouseDirection.Rotation());
 	}
+
+	AttackStarted.Broadcast();
 }
 
