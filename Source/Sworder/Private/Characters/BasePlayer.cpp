@@ -49,16 +49,16 @@ void ABasePlayer::BeginPlay()
 	{
 		AttackStarted.AddDynamic(AnimInstance, &UPlayerAnimInstance::AttackAnimation);
 	}
+
+	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+	WeaponChildActor->SetChildActorClass(WeaponClass);
+	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 }
 
 // Called every frame
 void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
-	WeaponChildActor->SetChildActorClass(WeaponClass);
-	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 }
 

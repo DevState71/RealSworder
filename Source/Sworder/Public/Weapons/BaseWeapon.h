@@ -20,8 +20,11 @@ protected:
 	virtual void BeginPlay() override;
 
 
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	//class USkeletalMeshComponent* SkeletalMesh;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	class USkeletalMeshComponent* SkeletalMesh;
+	class UStaticMeshComponent* StaticMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	class UBoxComponent* DamageCollision;
