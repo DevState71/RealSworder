@@ -32,6 +32,9 @@ ABasePlayer::ABasePlayer()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	WeaponChildActor = CreateDefaultSubobject<UChildActorComponent>(FName("WeaponChildActor"));
+	WeaponChildActor->SetupAttachment(GetMesh());
+
 
 }
 
@@ -47,6 +50,10 @@ void ABasePlayer::BeginPlay()
 void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+	WeaponChildActor->SetChildActorClass(WeaponClass);
+	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 }
 
