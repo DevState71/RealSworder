@@ -22,10 +22,14 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::AttackAnimation_Implementation()
 {
-	if (AttackAsset) {
-		this->PlaySlotAnimationAsDynamicMontage(AttackAsset, "Attack");
+	if (AttackMontage) {
 		UE_LOG(Game, Warning, TEXT("Attack Animation Called"));
+
+		this->Montage_Play(AttackMontage);
+		this->Montage_SetEndDelegate(AttackEnded, AttackMontage);
 	}
 	else
 		UE_LOG(Game, Error, TEXT("Attack Animation Called without the attack animation asset"));
+
+	
 }

@@ -3,6 +3,9 @@
 
 #include "Characters/BasePlayer.h"
 
+// For UE_Log
+#include "../../Sworder.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
@@ -39,6 +42,12 @@ ABasePlayer::ABasePlayer()
 
 }
 
+void ABasePlayer::EnableMovement(UAnimMontage* AnimMontage, bool bInterupted)
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	UE_LOG(Game, Warning, TEXT("Movement Enabled!"));
+}
+
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
@@ -48,6 +57,8 @@ void ABasePlayer::BeginPlay()
 	if (AnimInstance)
 	{
 		AttackStarted.AddDynamic(AnimInstance, &UPlayerAnimInstance::AttackAnimation);
+
+		AnimInstance->AttackEnded.BindUObject(this, &ABasePlayer::EnableMovement);
 	}
 
 	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
@@ -116,5 +127,8 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 	}
 
 	AttackStarted.Broadcast();
+	GetCharacterMovement()->DisableMovement();
+	UE_LOG(Game, Error, TEXT("Movement Disabled!"));
+
 }
 

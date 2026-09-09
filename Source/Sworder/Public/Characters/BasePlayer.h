@@ -39,6 +39,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName WeaponSocketName;
 
+	UFUNCTION()
+	void EnableMovement(UAnimMontage* AnimMontage, bool bInterupted);
 
 	// ----------------------------------------------------------------------------------- Animation -----------------------------------------------------------------------------------
 	class UPlayerAnimInstance* AnimInstance;

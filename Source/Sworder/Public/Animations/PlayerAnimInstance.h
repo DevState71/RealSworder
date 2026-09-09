@@ -9,6 +9,10 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FAnimDispatch);
+
+
 UCLASS()
 class SWORDER_API UPlayerAnimInstance : public UAnimInstance
 {
@@ -24,12 +28,15 @@ protected:
 	FVector Velocity;
 
 	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly, Category = "Assets")
-	UAnimSequenceBase* AttackAsset;
+	UAnimMontage* AttackMontage;
 
 	void NativeUpdateAnimation(float DeltaSeconds) override;
 
 
 public:
+	
+	FOnMontageEnded AttackEnded;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void AttackAnimation();
 	virtual void AttackAnimation_Implementation();
