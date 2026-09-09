@@ -3,6 +3,9 @@
 
 #include "Characters/BasePlayer.h"
 
+// For UE_Log
+#include "../../Sworder.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
@@ -10,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InputAction.h"
 #include "Utility/GamePlayerController.h"
+#include "Animations/PlayerAnimInstance.h"
 
 
 // Sets default values
@@ -38,22 +42,34 @@ ABasePlayer::ABasePlayer()
 
 }
 
+void ABasePlayer::EnableMovement(UAnimMontage* AnimMontage, bool bInterupted)
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	UE_LOG(Game, Warning, TEXT("Movement Enabled!"));
+}
+
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AnimInstance)
+	{
+		AttackStarted.AddDynamic(AnimInstance, &UPlayerAnimInstance::AttackAnimation);
+
+		AnimInstance->AttackEnded.BindUObject(this, &ABasePlayer::EnableMovement);
+	}
+
+	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+	WeaponChildActor->SetChildActorClass(WeaponClass);
+	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 }
 
 // Called every frame
 void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
-	WeaponChildActor->SetChildActorClass(WeaponClass);
-	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 }
 
@@ -109,5 +125,10 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		MouseDirection.Z = 0;
 		SetActorRotation(MouseDirection.Rotation());
 	}
+
+	AttackStarted.Broadcast();
+	GetCharacterMovement()->DisableMovement();
+	UE_LOG(Game, Error, TEXT("Movement Disabled!"));
+
 }
 
