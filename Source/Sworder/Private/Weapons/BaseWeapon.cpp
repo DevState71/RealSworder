@@ -3,6 +3,7 @@
 
 #include "Weapons/BaseWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -13,10 +14,13 @@ ABaseWeapon::ABaseWeapon() : Damage(5)
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(FName("SkeletalMesh"));
-	SetRootComponent(SkeletalMesh);
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
+	SetRootComponent(StaticMesh);
+
 	DamageCollision = CreateDefaultSubobject<UBoxComponent>(FName("DamageCollision"));
-	DamageCollision->SetupAttachment(SkeletalMesh);
+	DamageCollision->SetupAttachment(StaticMesh);
+
+
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +42,7 @@ void ABaseWeapon::SetWeaponVariables(float newDamage, float newSliceSpeed, float
 
 void ABaseWeapon::WeaponCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != this && ParentPawn) {
+	if (ParentPawn && OtherActor != ParentPawn) {
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, ParentPawn->GetController(), this, NULL);
 	}
 

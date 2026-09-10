@@ -7,6 +7,9 @@
 #include "Weapons/BaseWeapon.h"
 #include "BasePlayer.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEventDispatch);
+
 UCLASS()
 class SWORDER_API ABasePlayer : public ACharacter
 {
@@ -35,6 +38,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName WeaponSocketName;
+
+	UFUNCTION()
+	void EnableMovement(UAnimMontage* AnimMontage, bool bInterupted);
+
+	// ----------------------------------------------------------------------------------- Animation -----------------------------------------------------------------------------------
+	class UPlayerAnimInstance* AnimInstance;
+
+	FEventDispatch AttackStarted;
+
+	// ----------------------------------------------------------------------------------- End Animation -----------------------------------------------------------------------------------
+
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
