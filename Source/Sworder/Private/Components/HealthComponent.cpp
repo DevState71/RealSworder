@@ -27,16 +27,59 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 		const FGameplayTagContainer& SelfTags = SelfTagManager->GetGameplayTagContainer();
 		const FGameplayTagContainer& AttackerTags = AttackerTagManager->GetGameplayTagContainer();
 
-		if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")))
+		if(SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element")) && AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element")))
 		{
-			DamageAmount *= 2.0f; // Fire is strong against Ice
-			UE_LOG(LogTemp, Warning, TEXT("Fire is strong against Ice! Damage doubled."));
+			UE_LOG(LogTemp, Warning, TEXT("Both the attacker and the target have Element tags!"));
+
+			if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
+			{
+				DamageAmount *= 2.0f; // Ice is strong against Fire
+				UE_LOG(LogTemp, Warning, TEXT("Ice is strong against Fire! Damage doubled."));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")))
+			{
+				DamageAmount *= 0.5f; // Fire is weak against Ice
+				UE_LOG(LogTemp, Warning, TEXT("Fire is weak against Ice! Damage halved."));
+			}
+
+			if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")))
+			{
+				DamageAmount *= 2.0f; // Fire is strong against Earth
+				UE_LOG(LogTemp, Warning, TEXT("Fire is strong against Earth! Damage doubled."));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
+			{
+				DamageAmount *= 0.5f; // Earth is weak against Fire
+				UE_LOG(LogTemp, Warning, TEXT("Earth is weak against Fire! Damage halved."));
+			}
+
+			if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")))
+			{
+				DamageAmount *= 2.0f; // Earth is strong against Lightning
+				UE_LOG(LogTemp, Warning, TEXT("Earth is strong against Lightning! Damage doubled."));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")))
+			{
+				DamageAmount *= 0.5f; // Lightning is weak against Earth
+				UE_LOG(LogTemp, Warning, TEXT("Lightning is weak against Earth! Damage halved."));
+			}
+
+			if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")))
+			{
+				DamageAmount *= 2.0f; // Lightning is strong against Ice
+				UE_LOG(LogTemp, Warning, TEXT("Lightning is strong against Ice! Damage doubled."));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")))
+			{
+				DamageAmount *= 0.5f; // Ice is weak against Lightning
+				UE_LOG(LogTemp, Warning, TEXT("Ice is weak against Lightning! Damage halved."));
+			}
+
+			
+
+		
 		}
-		else if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")) && SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
-		{
-			DamageAmount *= 0.5f; // Ice is weak against Fire
-			UE_LOG(LogTemp, Warning, TEXT("Ice is weak against Fire! Damage halved."));
-		}
+	
 
 	}
 	

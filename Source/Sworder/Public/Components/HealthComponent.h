@@ -20,6 +20,8 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat")
 	float ProcessDamageType(float DamageAmount, AActor* DamageCauser);
+
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
