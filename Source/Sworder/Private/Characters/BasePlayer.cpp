@@ -46,6 +46,9 @@ void ABasePlayer::EnableMovement(UAnimMontage* AnimMontage, bool bInterupted)
 {
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	UE_LOG(Game, Warning, TEXT("Movement Enabled!"));
+
+	// Character rotates in the direction that they are moving
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 // Called when the game starts or when spawned
@@ -117,6 +120,8 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
+
+	// Looks in the direction of the mouse
 	AGamePlayerController* PlayerController = Cast<AGamePlayerController>(GetController());
 	if (PlayerController) {
 		FVector MouseWorldPos;
@@ -124,11 +129,14 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		FVector MouseDirection = MouseWorldPos - GetActorLocation();
 		MouseDirection.Z = 0;
 		SetActorRotation(MouseDirection.Rotation());
+
+
+		// Stops Character From Rotating
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
 
+	// Starts Attack Animation
 	AttackStarted.Broadcast();
-	GetCharacterMovement()->DisableMovement();
-	UE_LOG(Game, Error, TEXT("Movement Disabled!"));
 
 }
 
