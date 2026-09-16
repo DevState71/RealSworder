@@ -77,27 +77,25 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 				UE_LOG(LogTemp, Warning, TEXT("Ice is weak against Lightning! Damage halved."));
 			}
 
-			
-			if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
-			{
-				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Fire"));
-			}
-			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")))
-			{
-				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Ice"));
-			}
-			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")))
-			{
-				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Lightning"));
-			}
-			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")))
-			{
-				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Earth"));
-			}
-		
 		}
 	
 
+		if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
+		{
+			SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Fire"));
+		}
+		else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")))
+		{
+			SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Ice"));
+		}
+		else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")))
+		{
+			SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Lightning"));
+		}
+		else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")))
+		{
+			AttackerTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Earth"));
+		}
 	}
 	
 	return DamageAmount;

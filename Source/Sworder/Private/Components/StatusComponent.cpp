@@ -97,6 +97,8 @@ void UStatusComponent::AddBurn()
 
 void UStatusComponent::RemoveBurn()
 {
+	
+	GetWorld()->GetTimerManager().ClearTimer(BurnTimerHandle);
 	UE_LOG(LogTemp, Warning, TEXT("Burn removed!"));
 	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
 	if(TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Burn")))
@@ -113,6 +115,7 @@ void UStatusComponent::AddSlow()
 
 void UStatusComponent::RemoveSlow()
 {
+	GetWorld()->GetTimerManager().ClearTimer(SlowTimerHandle);
 	UE_LOG(LogTemp, Warning, TEXT("Slow removed!"));
 	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
 	if(TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Slow")))
@@ -129,6 +132,7 @@ void UStatusComponent::AddStun()
 
 void UStatusComponent::RemoveStun()
 {
+	GetWorld()->GetTimerManager().ClearTimer(StunTimerHandle);
 	UE_LOG(LogTemp, Warning, TEXT("Stun removed!"));
 	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
 	if(TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
@@ -145,6 +149,7 @@ void UStatusComponent::AddShield()
 
 void UStatusComponent::RemoveShield()
 {
+	GetWorld()->GetTimerManager().ClearTimer(ShieldTimerHandle);
 	UE_LOG(LogTemp, Warning, TEXT("Shield removed!"));
 	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
 	if(TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Shield")))

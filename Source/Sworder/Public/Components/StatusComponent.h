@@ -9,7 +9,7 @@
 
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SWORDER_API UStatusComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -45,6 +45,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Status")
 	void HandleStatusTag(FGameplayTag tag, bool bAdded);
 
 	

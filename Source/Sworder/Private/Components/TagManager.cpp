@@ -35,9 +35,11 @@ void UTagManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 void UTagManager::StatusRoll(FGameplayTag tag)
 {
+	UE_LOG(LogTemp, Warning, TEXT("StatusRoll called with tag: %s"), *tag.ToString());
+
 	int32 RandomNumber = FMath::RandRange(1, 100);
 
-	if (RandomNumber <= 70)
+	if (RandomNumber <= StatusChance)
 	{
 		if (tag == FGameplayTag::RequestGameplayTag("Element.Fire"))
 		{
