@@ -11,7 +11,7 @@ void UPauseMenuWidget::NativePreConstruct()
 
 	if (ResumeButton) ResumeButton->SetButtonText(FText::FromString("Resume"));
 	if (OptionsButton) OptionsButton->SetButtonText(FText::FromString("Options"));
-	if (QuitButton) QuitButton->SetButtonText(FText::FromString("Quit to Main Menu"));
+	if (QuitButton) QuitButton->SetButtonText(FText::FromString("Main Menu"));
 }
 
 void UPauseMenuWidget::NativeConstruct()
