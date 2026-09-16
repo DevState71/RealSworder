@@ -19,6 +19,7 @@ void UTagManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 	// ...
 	
 }
@@ -30,5 +31,42 @@ void UTagManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void UTagManager::StatusRoll(FGameplayTag tag)
+{
+	int32 RandomNumber = FMath::RandRange(1, 100);
+
+	if (RandomNumber <= 70)
+	{
+		if (tag == FGameplayTag::RequestGameplayTag("Element.Fire"))
+		{
+			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Burn"));
+		}
+		else if( tag == FGameplayTag::RequestGameplayTag("Element.Ice"))
+		{
+			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Slow"));
+		}
+		else if(tag == FGameplayTag::RequestGameplayTag("Element.Earth"))
+		{
+			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Shield"));
+		}
+		else if(tag == FGameplayTag::RequestGameplayTag("Element.Lightning"))
+		{
+			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Stun"));
+		}
+	
+
+	}
+}
+
+void UTagManager::AddGameplayTag(FGameplayTag tag)
+{
+	if(!GameplayTagContainer.HasTag(tag))
+	{
+		GameplayTagContainer.AddTag(tag);
+
+		AddStatusTag.Broadcast(tag, true);
+	}
 }
 

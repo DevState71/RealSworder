@@ -27,6 +27,8 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 		const FGameplayTagContainer& SelfTags = SelfTagManager->GetGameplayTagContainer();
 		const FGameplayTagContainer& AttackerTags = AttackerTagManager->GetGameplayTagContainer();
 
+		
+
 		if(SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element")) && AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element")))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Both the attacker and the target have Element tags!"));
@@ -76,7 +78,22 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 			}
 
 			
-
+			if(AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
+			{
+				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Fire"));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Ice")))
+			{
+				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Ice"));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Lightning")))
+			{
+				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Lightning"));
+			}
+			else if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Earth")))
+			{
+				SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Earth"));
+			}
 		
 		}
 	
