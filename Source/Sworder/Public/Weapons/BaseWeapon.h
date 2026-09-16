@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeapon.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class SWORDER_API ABaseWeapon : public AActor
 {
 	GENERATED_BODY()
