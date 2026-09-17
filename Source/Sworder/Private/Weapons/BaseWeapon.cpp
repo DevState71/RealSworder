@@ -17,8 +17,8 @@ ABaseWeapon::ABaseWeapon() : Damage(5)
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("StaticMesh"));
 	SetRootComponent(StaticMesh);
 
-	DamageCollision = CreateDefaultSubobject<UBoxComponent>(FName("DamageCollision"));
-	DamageCollision->SetupAttachment(StaticMesh);
+	//DamageCollision = CreateDefaultSubobject<UBoxComponent>(FName("DamageCollision"));
+	//DamageCollision->SetupAttachment(StaticMesh);
 
 
 }
@@ -27,7 +27,7 @@ ABaseWeapon::ABaseWeapon() : Damage(5)
 void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::WeaponCollision);
+	//DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseWeapon::WeaponCollision);
 }
 
 void ABaseWeapon::SetWeaponVariables(float newDamage, float newSliceSpeed, float newSheathSpeed, float newLength, int newSlashCount, float newRecoverySpeed)
