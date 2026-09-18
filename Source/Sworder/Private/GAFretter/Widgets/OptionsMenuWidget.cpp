@@ -3,6 +3,7 @@
 
 #include "GAFretter/Widgets/OptionsMenuWidget.h"
 #include "GAFretter/Widgets/ButtonWithText.h"
+#include "GAFretter/Settings/SworderGameUserSettings.h"
 #include "AudioDevice.h"
 #include "Characters/BasePlayer.h"
 #include "Components/WidgetSwitcher.h"
@@ -128,7 +129,19 @@ void UOptionsMenuWidget::OnAudioTabClicked() { if (OptionsSwitcher) OptionsSwitc
 void UOptionsMenuWidget::OnGraphicsTabClicked() { if (OptionsSwitcher) OptionsSwitcher->SetActiveWidgetIndex(2); }
 
 	// Remove this menu to reveal the Main Menu or Pause Menu sitting behind it
-void UOptionsMenuWidget::OnBackClicked() { RemoveFromParent(); }
+void UOptionsMenuWidget::OnBackClicked()
+{ 
+	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
+	{
+		if (MasterVolumeSlider) Settings->MasterVolume = MasterVolumeSlider->GetValue();
+		if (MusicVolumeSlider) Settings->MusicVolume = MusicVolumeSlider->GetValue();
+		if (SFXVolumeSlider) Settings->SFXVolume = SFXVolumeSlider->GetValue();
+		if (DialogueVolumeSlider) Settings->DialogueVolume = DialogueVolumeSlider->GetValue();
+		if (GamepadVibCheckBox) Settings->bGamepadVibration = GamepadVibCheckBox->IsChecked();
+		Settings->SaveSettings();
+	}
+	RemoveFromParent();
+}
 
 // ================ CONTROLS EVENT HANDLERS =================
 

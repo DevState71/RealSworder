@@ -3,7 +3,55 @@
 
 #include "GAFretter/Instances/ProjGameInst.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
+#include "AudioDevice.h"
+#include "Sound/SoundMix.h"
+#include "Sound/SoundClass.h"
+#include "GAFretter/Settings/SworderGameUserSettings.h"
 #include "GameFramework/PlayerController.h"
+
+void UProjGameInst::Init()
+{
+	Super::Init();
+
+	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
+	{
+		// Safely fetch the core Audio Device directly from the Engine (bypassing GetWorld)
+		if (GEngine)
+		{
+			if (FAudioDeviceHandle AudioDevice = GEngine->GetMainAudioDevice())
+			{
+				// Apply the SoundMix to the Audio Device
+				if (MainSoundMix)
+				{
+					AudioDevice->PushSoundMixModifier(MainSoundMix);
+
+					// Calculate perceptual volumes and apply them to the classes natively
+					if (MasterSoundClass)
+					{
+						float PerpetualMaster = Settings->MasterVolume * Settings->MasterVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, MasterSoundClass, PerpetualMaster, 1.0f, 0.0f, true);
+					}
+					if (MusicSoundClass)
+					{
+						float PerpetualMusic = Settings->MusicVolume * Settings->MusicVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, MusicSoundClass, PerpetualMusic, 1.0f, 0.0f, true);
+					}
+					if (SFXSoundClass)
+					{
+						float PerpetualSFX = Settings->SFXVolume * Settings->SFXVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, SFXSoundClass, PerpetualSFX, 1.0f, 0.0f, true);
+					}
+					if (DialogueSoundClass)
+					{
+						float PerpetualDialogue = Settings->DialogueVolume * Settings->DialogueVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, DialogueSoundClass, PerpetualDialogue, 1.0f, 0.0f, true);
+					}
+				}
+			}
+		}
+	}
+}
 
 void UProjGameInst::LoadFirstLevel()
 {

@@ -6,6 +6,9 @@
 #include "Engine/GameInstance.h"
 #include "ProjGameInst.generated.h"
 
+class USoundMix;
+class USoundClass;
+
 /**
  * 
  */
@@ -15,6 +18,8 @@ class SWORDER_API UProjGameInst : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	virtual void Init() override;
+
 	// Core transition functions
 	UFUNCTION(BlueprintCallable, Category = "Level Management")
 	void LoadFirstLevel();
@@ -27,6 +32,7 @@ public:
 	void LoadLevelSafe(int32 LevelIndex);
 
 protected:
+	// -------- LEVEL DATA --------
 	// Holds the names of our maps (e.g., "MainMenu", "TestingMap")
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level Data")
 	TArray<FName> GameLevels;
@@ -39,4 +45,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Level Data")
 	int32 CurrentLevelIndex = 0;
 
+	// -------- NATIVE AUDIO ASSET POINTERS --------
+	UPROPERTY(EditDefaultsOnly, Category = "Audio|Mixes")
+	USoundMix* MainSoundMix;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio|Classes")
+	USoundClass* MasterSoundClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio|Classes")
+	USoundClass* MusicSoundClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio|Classes")
+	USoundClass* SFXSoundClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio|Classes")
+	USoundClass* DialogueSoundClass;
 };
