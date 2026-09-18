@@ -16,6 +16,11 @@ void UProjGameInst::Init()
 
 	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
 	{
+		// -------- INITIALIZE INPUT ICONS --------
+		// Sets the global icon dictionary immediately upon boot
+		UpdateInputDevicePreference(Settings->PreferredInputDevice);
+
+		// -------- INITIALIZE AUDIO --------
 		// Safely fetch the core Audio Device directly from the Engine (bypassing GetWorld)
 		if (GEngine)
 		{
@@ -81,6 +86,23 @@ void UProjGameInst::LoadLevelSafe(int32 LevelIndex)
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Error: The index %d is not a valid index in the GameLevels array!"), LevelIndex);
+	}
+}
+
+void UProjGameInst::UpdateInputDevicePreference(FString DeviceName)
+{
+	// Look up the exact string in our dictionary of device icon sets
+	if (FDeviceIconSet* FoundIconSet = DeviceIconDictionary.Find(DeviceName))
+	{
+		ActiveIconSet = *FoundIconSet;
+	}
+	else if (DeviceName == "Auto-Detect")
+	{
+		// Optional: Default to Kayboard or write native haredware query logic here to detect the device
+		if (FDeviceIconSet* DefaultIconSet = DeviceIconDictionary.Find("Keyboard / Mouse"))
+		{
+			ActiveIconSet = *DefaultIconSet;
+		}
 	}
 }
 

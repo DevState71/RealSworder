@@ -36,4 +36,7 @@ public:
 	// --- CONTROLS SETTINGS ---
 	UPROPERTY(Config)
 	bool bGamepadVibration;
+
+	UPROPERTY(Config)
+	FString PreferredInputDevice;
 };
