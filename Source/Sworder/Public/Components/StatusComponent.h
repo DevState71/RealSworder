@@ -8,6 +8,7 @@
 #include "StatusComponent.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActorDifferentiation, FGameplayTag, Tag, bool, bAdded);
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SWORDER_API UStatusComponent : public UActorComponent
@@ -32,10 +33,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
 	float ShieldTimer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Numbers")
+	float BurnDamageTick;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Numbers")
+	float BurnDamageTickInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Numbers")
+	float ShieldAmount;
+
 	FTimerHandle BurnTimerHandle;
 	FTimerHandle SlowTimerHandle;
 	FTimerHandle StunTimerHandle;
 	FTimerHandle ShieldTimerHandle;
+
+	FTimerHandle BurnDamageTickHandle;
 
 protected:
 	// Called when the game starts
@@ -48,9 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Status")
 	void HandleStatusTag(FGameplayTag tag, bool bAdded);
 
+	UPROPERTY(BlueprintAssignable, Category = "Status")
+	FActorDifferentiation AddStatusTag;
 	
 	void AddBurn();
 	void RemoveBurn();
+	void BurnDamageTickFunction();
 	void AddSlow();
 	void RemoveSlow();
 	void AddStun();
