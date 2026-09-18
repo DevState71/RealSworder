@@ -4,10 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Engine/Texture2D.h"
 #include "ProjGameInst.generated.h"
 
 class USoundMix;
 class USoundClass;
+
+USTRUCT(BlueprintType)
+struct FDeviceIconSet
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* ConfirmButton;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* CancelButton;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UTexture2D* PrimaryAttack;
+
+};
 
 /**
  * 
@@ -30,6 +47,13 @@ public:
 	// The safe loading function that checks array bounds
 	UFUNCTION(BlueprintCallable, Category = "Level Management")
 	void LoadLevelSafe(int32 LevelIndex);
+
+	// Called by the Options Menu to swap the active texture Set to the appropriate input device in question.
+	UFUNCTION(BlueprintCallable, Category = "Input Settings")
+	void UpdateInputDevicePreference(FString DeviceName);
+
+	UFUNCTION(BlueprintCallable, Category = "Input Settings")
+	FDeviceIconSet GetActiveIconSet() const { return ActiveIconSet; }
 
 protected:
 	// -------- LEVEL DATA --------
@@ -60,4 +84,14 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Audio|Classes")
 	USoundClass* DialogueSoundClass;
+
+	// -------- INPUT DEVICE ICON SETS --------
+
+	// Maps the device string to the appropriate icon set, based on the current input device in question
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Input Icons")
+	TMap<FString, FDeviceIconSet> DeviceIconDictionary;
+
+	// Current active set of icons loaded in memory
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|Input Icons")
+	FDeviceIconSet ActiveIconSet;
 };

@@ -60,6 +60,9 @@ protected:
 
 	// ======== CONTROLS SETTINGS ========
 	// --- CONTROLS WIDGETS ---
+	UPROPERTY(EditDefaultsOnly, Category = "UI|SubMenus")
+	TSubclassOf<class UUserWidget> KeybindsMenuClass;
+
 	UPROPERTY(meta = (BindWidget))
 	UButton* KeybindsButton;
 
