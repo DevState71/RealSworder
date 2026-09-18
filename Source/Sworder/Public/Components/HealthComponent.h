@@ -21,6 +21,14 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat")
 	float ProcessDamageType(float DamageAmount, AActor* DamageCauser);
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat")
+	void TakeFlatDamage(float DamageAmount, AActor* DamageCauser);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat")
+	float DamageShield(float DamageAmount, AActor* DamageCauser);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shield")
+	float ShieldHP;
 
 protected:
 	// Called when the game starts
