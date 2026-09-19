@@ -8,6 +8,8 @@
 #include "TagManager.generated.h"
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStatusTagging, FGameplayTag, Tag, bool, bAdded);
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SWORDER_API UTagManager : public UActorComponent
 {
@@ -22,6 +24,9 @@ public:
 
 	const FGameplayTagContainer& GetGameplayTagContainer() const { return GameplayTagContainer; }
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	int32 StatusChance = 100;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -30,5 +35,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void StatusRoll(FGameplayTag tag);
 		
+	UPROPERTY(BlueprintAssignable)
+	FStatusTagging AddStatusTag;
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	void AddGameplayTag(FGameplayTag tag);
 };

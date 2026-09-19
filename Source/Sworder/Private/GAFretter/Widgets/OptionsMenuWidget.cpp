@@ -3,6 +3,8 @@
 
 #include "GAFretter/Widgets/OptionsMenuWidget.h"
 #include "GAFretter/Widgets/ButtonWithText.h"
+#include "GAFretter/Settings/SworderGameUserSettings.h"
+#include "GAFretter/Instances/ProjGameInst.h"
 #include "AudioDevice.h"
 #include "Characters/BasePlayer.h"
 #include "Components/WidgetSwitcher.h"
@@ -46,7 +48,13 @@ void UOptionsMenuWidget::NativeConstruct()
 	{
 		InputDeviceComboBox->AddOption("Auto-Detect");
 		InputDeviceComboBox->AddOption("Keyboard / Mouse");
-		InputDeviceComboBox->AddOption("Controller");
+		InputDeviceComboBox->AddOption("Xbox Series X");
+		InputDeviceComboBox->AddOption("Xbox One");
+		InputDeviceComboBox->AddOption("Xbox 360");
+		InputDeviceComboBox->AddOption("PlayStation 4");
+		InputDeviceComboBox->AddOption("PlayStation 5");
+		InputDeviceComboBox->AddOption("Nintendo Switch Pro");
+		InputDeviceComboBox->AddOption("Nintendo Switch 2 Pro");
 		InputDeviceComboBox->OnSelectionChanged.AddDynamic(this, &UOptionsMenuWidget::OnInputDeviceChanged);
 	}
 
@@ -119,6 +127,41 @@ void UOptionsMenuWidget::NativeConstruct()
 		QualityPresetComboBox->AddOption("Epic");
 		QualityPresetComboBox->OnSelectionChanged.AddDynamic(this, &UOptionsMenuWidget::OnQualityPresetChanged);
 	}
+
+	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
+	{
+		if (GamepadVibCheckBox) GamepadVibCheckBox->SetIsChecked(Settings->bGamepadVibration);
+		if (InputDeviceComboBox && !Settings->PreferredInputDevice.IsEmpty()) InputDeviceComboBox->SetSelectedOption(Settings->PreferredInputDevice);
+		if (MasterVolumeSlider) MasterVolumeSlider->SetValue(Settings->MasterVolume);
+		if (MusicVolumeSlider) MusicVolumeSlider->SetValue(Settings->MusicVolume);
+		if (SFXVolumeSlider) SFXVolumeSlider->SetValue(Settings->SFXVolume);
+		if (DialogueVolumeSlider) DialogueVolumeSlider->SetValue(Settings->DialogueVolume);
+		if (VSyncCheckBox) VSyncCheckBox->SetIsChecked(Settings->IsVSyncEnabled());
+
+		if (ResolutionComboBox)
+		{
+			FIntPoint CurrentRes = Settings->GetScreenResolution();
+			FString ResString = FString::Printf(TEXT("%dx%d"), CurrentRes.X, CurrentRes.Y);
+			ResolutionComboBox->SetSelectedOption(ResString);
+		}
+
+		if (DisplayModeComboBox)
+		{
+			EWindowMode::Type CurrentMode = Settings->GetFullscreenMode();
+			if (CurrentMode == EWindowMode::Fullscreen) DisplayModeComboBox->SetSelectedOption("Fullcreen");
+			else if (CurrentMode == EWindowMode::WindowedFullscreen) DisplayModeComboBox->SetSelectedOption("Windowed Fullscreen");
+			else DisplayModeComboBox->SetSelectedOption("Windowed");
+		}
+
+		if (QualityPresetComboBox)
+		{
+			int32 CurrentQuality = Settings->GetOverallScalabilityLevel();
+			if (CurrentQuality == 0) QualityPresetComboBox->SetSelectedOption("Low");
+			else if (CurrentQuality == 1) QualityPresetComboBox->SetSelectedOption("Medium");
+			else if (CurrentQuality == 2) QualityPresetComboBox->SetSelectedOption("High");
+			else QualityPresetComboBox->SetSelectedOption("Epic");
+		}
+	}
 }
 
 void UOptionsMenuWidget::OnControlsTabClicked() { if (OptionsSwitcher) OptionsSwitcher->SetActiveWidgetIndex(0); }
@@ -128,23 +171,63 @@ void UOptionsMenuWidget::OnAudioTabClicked() { if (OptionsSwitcher) OptionsSwitc
 void UOptionsMenuWidget::OnGraphicsTabClicked() { if (OptionsSwitcher) OptionsSwitcher->SetActiveWidgetIndex(2); }
 
 	// Remove this menu to reveal the Main Menu or Pause Menu sitting behind it
-void UOptionsMenuWidget::OnBackClicked() { RemoveFromParent(); }
+void UOptionsMenuWidget::OnBackClicked()
+{ 
+	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
+	{
+		if (MasterVolumeSlider) Settings->MasterVolume = MasterVolumeSlider->GetValue();
+		if (MusicVolumeSlider) Settings->MusicVolume = MusicVolumeSlider->GetValue();
+		if (SFXVolumeSlider) Settings->SFXVolume = SFXVolumeSlider->GetValue();
+		if (DialogueVolumeSlider) Settings->DialogueVolume = DialogueVolumeSlider->GetValue();
+		if (GamepadVibCheckBox) Settings->bGamepadVibration = GamepadVibCheckBox->IsChecked();
+		Settings->SaveSettings();
+	}
+	RemoveFromParent();
+}
 
 // ================ CONTROLS EVENT HANDLERS =================
 
 void UOptionsMenuWidget::OnKeybindsClicked()
 {
-	// TODO: Spawn and AddToViewport your separate Keybindings Sub-Menu Widget
+	// This ensures the designer actually slotted a widget class in the editor
+	if (KeybindsMenuClass)
+	{
+		// This natively constructs the widget
+		if (UUserWidget* KeybindsMenu = CreateWidget<UUserWidget>(GetWorld(), KeybindsMenuClass))
+		{
+			// Adds it to the screen w/ Z-Order of 10 so it overlays on top of the Options Menu
+			KeybindsMenu->AddToViewport(10);
+		}
+	}
 }
 
 void UOptionsMenuWidget::OnGamepadVibChanged(bool bIsChecked)
 {
-	// TODO: Toggle Force Feedback booleans in PlayerController
+	// Fetch active player controller natively
+	if (UWorld* World = GetWorld())
+	{
+		if (APlayerController* PC = World->GetFirstPlayerController())
+		{
+			PC->bForceFeedbackEnabled = bIsChecked;
+		}
+	}
 }
 
 void UOptionsMenuWidget::OnInputDeviceChanged(FString SelectedItem, ESelectInfo::Type SelectionType)
 {
-	// TODO: Override UI navigation rules and input icons based on SelectedItem
+	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
+	{
+		// Saves the string value of the selected input device to the settings file for later retrieval
+		Settings->PreferredInputDevice = SelectedItem;
+		Settings->SaveSettings();
+
+		// Safely casts our custom Game Instance
+		if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance()))
+		{
+			// Updates the global icon dictionary
+			GameInst->UpdateInputDevicePreference(SelectedItem);
+		}
+	}
 }
 
 // ================ AUDIO SLIDER EVENT HANDLERS =================

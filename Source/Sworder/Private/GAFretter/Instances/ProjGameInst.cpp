@@ -3,7 +3,60 @@
 
 #include "GAFretter/Instances/ProjGameInst.h"
 #include "Engine/World.h"
+#include "Engine/Engine.h"
+#include "AudioDevice.h"
+#include "Sound/SoundMix.h"
+#include "Sound/SoundClass.h"
+#include "GAFretter/Settings/SworderGameUserSettings.h"
 #include "GameFramework/PlayerController.h"
+
+void UProjGameInst::Init()
+{
+	Super::Init();
+
+	if (USworderGameUserSettings* Settings = USworderGameUserSettings::GetSworderUserSettings())
+	{
+		// -------- INITIALIZE INPUT ICONS --------
+		// Sets the global icon dictionary immediately upon boot
+		UpdateInputDevicePreference(Settings->PreferredInputDevice);
+
+		// -------- INITIALIZE AUDIO --------
+		// Safely fetch the core Audio Device directly from the Engine (bypassing GetWorld)
+		if (GEngine)
+		{
+			if (FAudioDeviceHandle AudioDevice = GEngine->GetMainAudioDevice())
+			{
+				// Apply the SoundMix to the Audio Device
+				if (MainSoundMix)
+				{
+					AudioDevice->PushSoundMixModifier(MainSoundMix);
+
+					// Calculate perceptual volumes and apply them to the classes natively
+					if (MasterSoundClass)
+					{
+						float PerpetualMaster = Settings->MasterVolume * Settings->MasterVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, MasterSoundClass, PerpetualMaster, 1.0f, 0.0f, true);
+					}
+					if (MusicSoundClass)
+					{
+						float PerpetualMusic = Settings->MusicVolume * Settings->MusicVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, MusicSoundClass, PerpetualMusic, 1.0f, 0.0f, true);
+					}
+					if (SFXSoundClass)
+					{
+						float PerpetualSFX = Settings->SFXVolume * Settings->SFXVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, SFXSoundClass, PerpetualSFX, 1.0f, 0.0f, true);
+					}
+					if (DialogueSoundClass)
+					{
+						float PerpetualDialogue = Settings->DialogueVolume * Settings->DialogueVolume;
+						AudioDevice->SetSoundMixClassOverride(MainSoundMix, DialogueSoundClass, PerpetualDialogue, 1.0f, 0.0f, true);
+					}
+				}
+			}
+		}
+	}
+}
 
 void UProjGameInst::LoadFirstLevel()
 {
@@ -33,6 +86,23 @@ void UProjGameInst::LoadLevelSafe(int32 LevelIndex)
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Error: The index %d is not a valid index in the GameLevels array!"), LevelIndex);
+	}
+}
+
+void UProjGameInst::UpdateInputDevicePreference(FString DeviceName)
+{
+	// Look up the exact string in our dictionary of device icon sets
+	if (FDeviceIconSet* FoundIconSet = DeviceIconDictionary.Find(DeviceName))
+	{
+		ActiveIconSet = *FoundIconSet;
+	}
+	else if (DeviceName == "Auto-Detect")
+	{
+		// Optional: Default to Kayboard or write native haredware query logic here to detect the device
+		if (FDeviceIconSet* DefaultIconSet = DeviceIconDictionary.Find("Keyboard / Mouse"))
+		{
+			ActiveIconSet = *DefaultIconSet;
+		}
 	}
 }
 
