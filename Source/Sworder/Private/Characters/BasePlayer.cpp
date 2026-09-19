@@ -14,10 +14,12 @@
 #include "InputAction.h"
 #include "Utility/GamePlayerController.h"
 #include "Animations/PlayerAnimInstance.h"
+#include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
-ABasePlayer::ABasePlayer()
+ABasePlayer::ABasePlayer() : bIsAttacking(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -32,6 +34,12 @@ ABasePlayer::ABasePlayer()
 	PlayerCamera->SetupAttachment(SpringArm);
 	PlayerCamera->SetRelativeLocation(FVector(300, 13, 1000));
 	PlayerCamera->SetRelativeRotation(FRotator(-90, 0, 0));
+
+	DamageCollision = CreateDefaultSubobject<UBoxComponent>(FName("DamageCollision"));
+	DamageCollision->SetupAttachment(GetRootComponent());
+	DamageCollision->SetRelativeLocation(FVector(150.0, 0.0, 60.0));
+	DamageCollision->SetBoxExtent(FVector(80.0, 100.0, 125.0));
+	SetDamageCollision(false);
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -49,6 +57,7 @@ void ABasePlayer::EnableMovement(UAnimMontage* AnimMontage, bool bInterupted)
 
 	// Character rotates in the direction that they are moving
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	bIsAttacking = false;
 }
 
 void ABasePlayer::RotatePlayerTowardMouse()
@@ -61,6 +70,18 @@ void ABasePlayer::RotatePlayerTowardMouse()
 		MouseDirection.Z = 0;
 		SetActorRotation(MouseDirection.Rotation());
 	}
+}
+
+void ABasePlayer::PlayerDamageCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (Weapon) {
+		UGameplayStatics::ApplyDamage(OtherActor, Weapon->GetDamage(), GetController(), this, NULL);
+	}
+}
+
+void ABasePlayer::SetDamageCollision(bool bCollision)
+{
+	DamageCollision->SetGenerateOverlapEvents(bCollision);
 }
 
 // Called when the game starts or when spawned
@@ -79,6 +100,8 @@ void ABasePlayer::BeginPlay()
 	bool bAttached = WeaponChildActor->AttachToComponent((GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
 	WeaponChildActor->SetChildActorClass(WeaponClass);
 	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
+
+	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::PlayerDamageCollision);
 }
 
 // Called every frame
@@ -132,15 +155,16 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
+	if (!bIsAttacking) {
+		// Looks in the direction of the mouse
+		RotatePlayerTowardMouse();
 
-	// Looks in the direction of the mouse
-	RotatePlayerTowardMouse();
+		// Stops Character From Rotating
+		GetCharacterMovement()->bOrientRotationToMovement = false;
 
-	// Stops Character From Rotating
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-
-	// Starts Attack Animation
-	AttackStarted.Broadcast();
-
+		// Starts Attack Animation
+		AttackStarted.Broadcast();
+		bIsAttacking = true;
+	}
 }
 

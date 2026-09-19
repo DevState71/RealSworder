@@ -39,9 +39,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SetWeaponVariables(float newDamage, float newSliceSpeed, float newSheathSpeed, float newLength, int newSlashCount, float newRecoverySpeed);
 
-	UFUNCTION(BlueprintCallable)
-	float GetDamage();
-
 	UFUNCTION()
 	void WeaponCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
@@ -52,4 +49,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable)
+	float GetDamage();
 };
