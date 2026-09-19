@@ -42,6 +42,8 @@ protected:
 	UFUNCTION()
 	void EnableMovement(UAnimMontage* AnimMontage, bool bInterupted);
 
+	void RotatePlayerTowardMouse();
+
 	// ----------------------------------------------------------------------------------- Animation -----------------------------------------------------------------------------------
 	class UPlayerAnimInstance* AnimInstance;
 
