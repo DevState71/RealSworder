@@ -42,7 +42,23 @@ protected:
 	UFUNCTION()
 	void EnableMovement(UAnimMontage* AnimMontage, bool bInterupted);
 
+	// Rotates the player to face whereever the mouse is on screen
+	UFUNCTION(BlueprintCallable)
+	void RotatePlayerTowardMouse();
+
+	// Player attack Collision variables / functions
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	class UBoxComponent* DamageCollision;
+
+	bool bIsAttacking : 1;
+
+	UFUNCTION()
+	void PlayerDamageCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+public:
+	void SetDamageCollision(bool bCollision);
+
 	// ----------------------------------------------------------------------------------- Animation -----------------------------------------------------------------------------------
+protected:
 	class UPlayerAnimInstance* AnimInstance;
 
 	FEventDispatch AttackStarted;
