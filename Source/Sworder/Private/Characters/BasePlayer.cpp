@@ -165,6 +165,9 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		// Starts Attack Animation
 		AttackStarted.Broadcast();
 		bIsAttacking = true;
+
+		//Blueprint Function extending attack functionality
+		Attack();
 	}
 }
 

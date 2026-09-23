@@ -102,5 +102,8 @@ protected:
 	class UInputAction* Input_Attack;
 
 	void InputAttack(const FInputActionValue& Value);
+	// Allows for attack functionality to be added in blueprint
+	UFUNCTION(BLueprintImplementableEvent, Blueprintcallable)
+	void Attack();
 
 };
