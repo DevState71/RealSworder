@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Weapons/BaseWeapon.h"
+#include "Components/StatusComponent.h"
+#include "Components/TagManager.h"
 #include "BasePlayer.generated.h"
 
 
@@ -18,6 +20,9 @@ class SWORDER_API ABasePlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABasePlayer();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleStatusTag(FGameplayTag tag, bool bAdded);
 
 protected:
 	// Variables
@@ -38,6 +43,19 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName WeaponSocketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	UStatusComponent* StatusComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	TSubclassOf<UStatusComponent> StatusComponentClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	UTagManager* TagManager;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	TSubclassOf<UTagManager> TagManagerClass;
+
 
 	UFUNCTION()
 	void EnableMovement(UAnimMontage* AnimMontage, bool bInterupted);
