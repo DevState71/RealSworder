@@ -50,6 +50,33 @@ ABasePlayer::ABasePlayer() : bIsAttacking(false)
 
 }
 
+void ABasePlayer::HandleStatusTag(FGameplayTag tag, bool bAdded)
+{
+	if(tag == FGameplayTag::RequestGameplayTag("Status.Stun"))
+	{
+		if(bAdded)
+		{
+			UE_LOG(Game, Warning, TEXT("Stun Status Added!"));
+		}
+		else
+		{
+			UE_LOG(Game, Warning, TEXT("Stun Status Removed!"));
+		}
+	}
+	else if(tag == FGameplayTag::RequestGameplayTag("Status.Slow"))
+	{
+		if(bAdded)
+		{
+			UE_LOG(Game, Warning, TEXT("Slow Status Added!"));
+		}
+		else
+		{
+			UE_LOG(Game, Warning, TEXT("Slow Status Removed!"));
+		}
+	}
+
+}
+
 void ABasePlayer::EnableMovement(UAnimMontage* AnimMontage, bool bInterupted)
 {
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
@@ -89,6 +116,32 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if(TagManagerClass)
+	{
+		TagManager = NewObject<UTagManager>(this, TagManagerClass);
+		if (TagManager)
+		{
+			TagManager->RegisterComponent();
+		}
+	}
+	else
+	{
+		UE_LOG(Game, Warning, TEXT("TagManagerClass is not set!"));
+	}
+	if (StatusComponentClass)
+	{
+		StatusComponent = NewObject<UStatusComponent>(this, StatusComponentClass);
+		if (StatusComponent)
+		{
+			StatusComponent->RegisterComponent();
+			StatusComponent->AddStatusTag.AddDynamic(this, &ABasePlayer::HandleStatusTag);
+		}
+	}
+	else
+	{
+		UE_LOG(Game, Warning, TEXT("StatusComponentClass is not set!"));
+	}
+
 	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (AnimInstance)
 	{
@@ -102,6 +155,7 @@ void ABasePlayer::BeginPlay()
 	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::PlayerDamageCollision);
+
 }
 
 // Called every frame
@@ -137,10 +191,31 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ABasePlayer::InputMove(const FInputActionValue& Value)
 {
+	if (TagManager)
+	{
+		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
+		{
+			return;
+		}
+
+		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Slow")))
+		{
+			const FVector2D movement = Value.Get<FVector2D>();
+			const FRotator moveRotation(0.0f, PlayerCamera->GetRelativeRotation().Yaw, 0.0f);
+			AddMovementInput(FRotationMatrix(moveRotation).GetScaledAxis(EAxis::Y), movement.X * 0.5f);
+			AddMovementInput(moveRotation.Vector(), movement.Y * 0.5f);
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(Game, Warning, TEXT("TagManager is not set!"));
+	}
+	
+
+
 	const FVector2D movement = Value.Get<FVector2D>();
 	const FRotator moveRotation(0.0f, PlayerCamera->GetRelativeRotation().Yaw, 0.0f);
-
-
 	AddMovementInput(FRotationMatrix(moveRotation).GetScaledAxis(EAxis::Y), movement.X);
 	AddMovementInput(moveRotation.Vector(), movement.Y);
 
@@ -155,6 +230,17 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
+	if(TagManager)
+	{
+		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
+		{
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(Game, Warning, TEXT("TagManager is not set!"));
+	}
 	if (!bIsAttacking) {
 		// Looks in the direction of the mouse
 		RotatePlayerTowardMouse();
