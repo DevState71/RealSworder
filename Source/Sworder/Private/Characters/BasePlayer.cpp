@@ -19,7 +19,7 @@
 
 
 // Sets default values
-ABasePlayer::ABasePlayer() : bIsAttacking(false)
+ABasePlayer::ABasePlayer() : bIsAttacking(false), bCanAttack(true)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -156,18 +156,21 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
 	if (!bIsAttacking) {
-		// Looks in the direction of the mouse
-		RotatePlayerTowardMouse();
-
-		// Stops Character From Rotating
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-
-		// Starts Attack Animation
-		AttackStarted.Broadcast();
-		bIsAttacking = true;
 
 		//Blueprint Function extending attack functionality
 		Attack();
+
+		if (bCanAttack) {
+			// Looks in the direction of the mouse
+			RotatePlayerTowardMouse();
+
+			// Stops Character From Rotating
+			GetCharacterMovement()->bOrientRotationToMovement = false;
+
+			// Starts Attack Animation
+			AttackStarted.Broadcast();
+			bIsAttacking = true;
+		}
 	}
 }
 
