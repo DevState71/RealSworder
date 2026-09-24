@@ -52,7 +52,7 @@ protected:
 
 	bool bIsAttacking : 1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bCanAttack : 1;
+	bool bCanAttack;
 
 	UFUNCTION()
 	void PlayerDamageCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
