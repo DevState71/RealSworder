@@ -22,14 +22,24 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::AttackAnimation_Implementation()
 {
-	if (AttackMontage) {
+	if (AttackSequence) {
 		UE_LOG(Game, Warning, TEXT("Attack Animation Called"));
 
-		this->Montage_Play(AttackMontage);
-		this->Montage_SetEndDelegate(AttackEnded, AttackMontage);
+		UAnimMontage* attack = nullptr;
+
+		if (bIsFullBody) {
+			attack = this->PlaySlotAnimationAsDynamicMontage(AttackSequence, FName("Full_Body"));
+		}
+		else
+			attack = this->PlaySlotAnimationAsDynamicMontage(AttackSequence, FName("Attack"));
+		this->Montage_SetEndDelegate(AttackEnded, attack);
 	}
 	else
-		UE_LOG(Game, Error, TEXT("Attack Animation Called without the attack animation asset"));
+		UE_LOG(Game, Error, TEXT("Attack animation called without the animation sequence asset!"));
+}
 
-	
+void UPlayerAnimInstance::SetAttackAnimation(UAnimSequence* NewAttack, bool FullBody)
+{
+	AttackSequence = NewAttack;
+	bIsFullBody = FullBody;
 }

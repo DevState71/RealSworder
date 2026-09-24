@@ -28,10 +28,11 @@ protected:
 	FVector Velocity;
 
 	UPROPERTY(EditDefaultsOnly, BluePrintReadOnly, Category = "Assets")
-	UAnimMontage* AttackMontage;
+	UAnimSequence* AttackSequence;
 
 	void NativeUpdateAnimation(float DeltaSeconds) override;
 
+	bool bIsFullBody : 1;
 
 public:
 	
@@ -40,4 +41,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void AttackAnimation();
 	virtual void AttackAnimation_Implementation();
+
+	void SetAttackAnimation(UAnimSequence* NewAttack, bool FullBody = false);
 };
