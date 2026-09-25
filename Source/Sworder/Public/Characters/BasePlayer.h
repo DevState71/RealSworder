@@ -81,6 +81,12 @@ protected:
 
 	FEventDispatch AttackStarted;
 
+	// Variables that allow for attack animations to be changed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<class UAnimSequence*> AttackAnimations;
+	int AttackAnimationIndex = 0;
+	void UpdateAttackAnimation();
+
 	// ----------------------------------------------------------------------------------- End Animation -----------------------------------------------------------------------------------
 
 
@@ -120,5 +126,6 @@ protected:
 	class UInputAction* Input_Attack;
 
 	void InputAttack(const FInputActionValue& Value);
+
 
 };

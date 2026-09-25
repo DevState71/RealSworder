@@ -248,9 +248,36 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		// Stops Character From Rotating
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 
+		UpdateAttackAnimation();
+
 		// Starts Attack Animation
 		AttackStarted.Broadcast();
 		bIsAttacking = true;
+
+		
+	}
+}
+
+void ABasePlayer::UpdateAttackAnimation()
+{
+	if (AttackAnimations.Num() == 0) {
+		UE_LOG(Game, Error, TEXT("No animations set on the player!"));
+		return;
+	}
+
+	if (AnimInstance && AttackAnimations.IsValidIndex(AttackAnimationIndex)) {
+		bool bIsFullBody = false;
+		if (AttackAnimationIndex == AttackAnimations.Num() - 1) {
+			bIsFullBody = true;
+		}
+		
+		AnimInstance->SetAttackAnimation(AttackAnimations[AttackAnimationIndex], bIsFullBody);
+
+		if (AttackAnimationIndex < AttackAnimations.Num() - 1) {
+			AttackAnimationIndex++;
+		}
+		else
+			AttackAnimationIndex = 0;
 	}
 }
 
