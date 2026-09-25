@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
+#include "Components/ComboDataAsset.h"
 #include "HealthComponent.generated.h"
 
 
