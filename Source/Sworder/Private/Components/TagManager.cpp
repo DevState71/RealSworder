@@ -19,6 +19,13 @@ void UTagManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if(!ComboDataAsset)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ComboDataAsset is not assigned in TagManager on %s"), *GetOwner()->GetName());
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Loaded ComboDataAsset with %d combos"), ComboDataAsset->StoredCombos.Num());
 	
 	// ...
 	
@@ -41,25 +48,100 @@ void UTagManager::StatusRoll(FGameplayTag tag)
 
 	if (RandomNumber <= StatusChance)
 	{
-		if (tag == FGameplayTag::RequestGameplayTag("Element.Fire"))
-		{
-			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Burn"));
-		}
-		else if( tag == FGameplayTag::RequestGameplayTag("Element.Ice"))
-		{
-			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Slow"));
-		}
-		else if(tag == FGameplayTag::RequestGameplayTag("Element.Earth"))
-		{
-			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Shield"));
-		}
-		else if(tag == FGameplayTag::RequestGameplayTag("Element.Lightning"))
-		{
-			AddGameplayTag(FGameplayTag::RequestGameplayTag("Status.Stun"));
-		}
+		AddGameplayTag(tag);
+		UE_LOG(LogTemp, Warning, TEXT("StatusRoll succeeded with tag: %s"), *tag.ToString());
 	
 
 	}
+}
+
+FElementCombo* UTagManager::ComboBuild(FGameplayTag Tag)
+{
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("ComboBuild: TagManager=%p | Owner=%s | BEFORE=%d"),
+		this,
+		*GetOwner()->GetName(),
+		ComboTags.Num()
+	);
+
+	GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
+
+	ComboTags.Add(Tag);
+	CurrentComboTag = Tag;
+
+	UE_LOG(
+		LogTemp,
+		Warning,
+		TEXT("ComboBuild: TagManager=%p | AFTER=%d"),
+		this,
+		ComboTags.Num()
+	);
+
+	FElementCombo* Result = TriggerCombo();
+
+	GetWorld()->GetTimerManager().SetTimer(
+		ComboTimerHandle,
+		this,
+		&UTagManager::EndCombo,
+		ComboTime,
+		false
+	);
+
+	return Result;
+}
+
+FElementCombo* UTagManager::TriggerCombo()
+{
+	FElementCombo* Combo = nullptr;
+
+	bool neutral = CheckNeutral();
+	if(neutral)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Neutral tag detected, ending combo."));
+		return nullptr;
+	}
+	
+	UE_LOG(LogTemp, Warning, TEXT("TriggerCombo called with %d combo tags"), ComboTags.Num());
+
+for(FElementCombo& StoredCombo : ComboDataAsset->StoredCombos)
+	{
+		if(StoredCombo.ComboSequence == this->ComboTags)
+		{
+			Combo = &StoredCombo;
+			break;
+		}
+}
+
+	return Combo;
+}
+
+bool UTagManager::CheckNeutral()
+{
+	int32 coinFlip = FMath::RandRange(0, 1);
+
+	if(CurrentComboTag == FGameplayTag::RequestGameplayTag("Element.Neutral"))
+	{
+		
+		ComboTags.Pop();
+
+		if(coinFlip == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Neutral tag detected, ending combo."));
+			EndCombo();
+			return true;
+		}
+
+	}
+
+	
+	return false;
+}
+void UTagManager::EndCombo()
+{
+	ComboTags.Empty();
+	UE_LOG(LogTemp, Warning, TEXT("Combo ended."));
 }
 
 void UTagManager::AddGameplayTag(FGameplayTag tag)

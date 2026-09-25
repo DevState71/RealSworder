@@ -95,7 +95,7 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 
 		}
 
-
+/*
 		if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
 		{
 			SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Fire"));
@@ -155,8 +155,35 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 
 			}
 
+		}*/
+	} 
+
+	if (AttackerTagManager)
+	{
+		FElementCombo* Combo = AttackerTagManager->ComboBuild(AttackerTags.GetByIndex(0));
+
+		if(Combo == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No combo triggered."));
+		}
+		else
+		{
+			if (Combo->bEndsCombo)
+			{
+				AttackerTagManager->EndCombo();
+			}
+
+			if (Combo->SelfOrEnemy)
+			{
+				SelfTagManager->StatusRoll(Combo->Result);
+			}
+			else
+			{
+				AttackerTagManager->StatusRoll(Combo->Result);
+			}
 		}
 	}
+
 
 	
 	return DamageAmount;
