@@ -34,16 +34,26 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 	{
 		SelfTags = SelfTagManager->GetGameplayTagContainer();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelfTagManager is null for %s"), *GetOwner()->GetName());	
+
+	}
 
 	if(AttackerTagManager)
 	{
 		AttackerTags = AttackerTagManager->GetGameplayTagContainer();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackerTagManager is null for %s"), *DamageCauser->GetName());	
+	}
 
 	if (SelfTagManager && AttackerTagManager)
 	{
 		
-
+		UE_LOG(LogTemp, Warning, TEXT("SelfTags: %s"), *SelfTags.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("AttackerTags: %s"), *AttackerTags.ToString());
 
 		if (SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element")) && AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element")))
 		{

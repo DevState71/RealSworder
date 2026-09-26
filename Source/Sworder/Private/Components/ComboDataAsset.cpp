@@ -26,8 +26,7 @@ void UComboDataAsset::GenerateCombos()
     const FGameplayTag Neutral =
         FGameplayTag::RequestGameplayTag(FName("Element.Neutral"));
 
-    const FGameplayTag Storm =
-        FGameplayTag::RequestGameplayTag(FName("Element.Storm"));
+
 
     // ---------------------------------------------------------
     // RESULT TAGS
@@ -114,7 +113,7 @@ void UComboDataAsset::GenerateCombos()
     const FGameplayTag Supercharge =
         FGameplayTag::RequestGameplayTag(FName("Status.Supercharge"));
 
-    const FGameplayTag StormResult =
+    const FGameplayTag Storm =
         FGameplayTag::RequestGameplayTag(FName("Status.Storm"));
 
     const FGameplayTag Hypercharge =
@@ -217,7 +216,7 @@ void UComboDataAsset::GenerateCombos()
 
     AddCombo({ Earth, Ice, Lightning }, Supercharge, false, false);
 
-    AddCombo({ Earth, Ice, Lightning, Storm }, StormResult, true, true);
+    AddCombo({ Earth, Ice, Lightning}, Storm, true, true);
 
     AddCombo({ Earth, Ice, Lightning, Fire }, Hypercharge, true, false);
 

@@ -47,6 +47,9 @@ ABasePlayer::ABasePlayer() : bIsAttacking(false)
 	WeaponChildActor = CreateDefaultSubobject<UChildActorComponent>(FName("WeaponChildActor"));
 	WeaponChildActor->SetupAttachment(GetMesh());
 
+	TagManager = CreateDefaultSubobject<UTagManager>(FName("TagManager"));
+	StatusComponent = CreateDefaultSubobject<UStatusComponent>(FName("StatusComponent"));
+
 
 }
 
@@ -116,31 +119,14 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if(TagManagerClass)
-	{
-		TagManager = NewObject<UTagManager>(this, TagManagerClass);
-		if (TagManager)
-		{
-			TagManager->RegisterComponent();
-		}
-	}
-	else
-	{
-		UE_LOG(Game, Warning, TEXT("TagManagerClass is not set!"));
-	}
-	if (StatusComponentClass)
-	{
-		StatusComponent = NewObject<UStatusComponent>(this, StatusComponentClass);
+
+
 		if (StatusComponent)
 		{
-			StatusComponent->RegisterComponent();
+			
 			StatusComponent->AddStatusTag.AddDynamic(this, &ABasePlayer::HandleStatusTag);
 		}
-	}
-	else
-	{
-		UE_LOG(Game, Warning, TEXT("StatusComponentClass is not set!"));
-	}
+	
 
 	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (AnimInstance)
