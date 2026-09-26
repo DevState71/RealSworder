@@ -48,13 +48,9 @@ protected:
 	UStatusComponent* StatusComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
-	TSubclassOf<UStatusComponent> StatusComponentClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
 	UTagManager* TagManager;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
-	TSubclassOf<UTagManager> TagManagerClass;
+
 
 
 	UFUNCTION()

@@ -57,29 +57,14 @@ void UTagManager::StatusRoll(FGameplayTag tag)
 
 FElementCombo* UTagManager::ComboBuild(FGameplayTag Tag)
 {
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("ComboBuild: TagManager=%p | Owner=%s | BEFORE=%d"),
-		this,
-		*GetOwner()->GetName(),
-		ComboTags.Num()
-	);
+	
 
 	GetWorld()->GetTimerManager().ClearTimer(ComboTimerHandle);
 
 	ComboTags.Add(Tag);
 	CurrentComboTag = Tag;
-
-	UE_LOG(
-		LogTemp,
-		Warning,
-		TEXT("ComboBuild: TagManager=%p | AFTER=%d"),
-		this,
-		ComboTags.Num()
-	);
-
 	FElementCombo* Result = TriggerCombo();
+
 
 	GetWorld()->GetTimerManager().SetTimer(
 		ComboTimerHandle,
@@ -119,11 +104,11 @@ for(FElementCombo& StoredCombo : ComboDataAsset->StoredCombos)
 
 bool UTagManager::CheckNeutral()
 {
-	int32 coinFlip = FMath::RandRange(0, 1);
+	
 
 	if(CurrentComboTag == FGameplayTag::RequestGameplayTag("Element.Neutral"))
 	{
-		
+		int32 coinFlip = FMath::RandRange(0, 1);
 		ComboTags.Pop();
 
 		if(coinFlip == 0)
