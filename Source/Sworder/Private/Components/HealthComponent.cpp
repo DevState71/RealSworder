@@ -191,6 +191,13 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 			{
 				AttackerTagManager->StatusRoll(Combo->Result);
 			}
+
+			// -------- COMBO DISCOVERY UI BROADCAST --------
+			if (!Combo->bIsDiscovered)
+			{
+				Combo->bIsDiscovered = true;
+				OnComboDiscovered.Broadcast(*Combo);
+			}
 		}
 	}
 
