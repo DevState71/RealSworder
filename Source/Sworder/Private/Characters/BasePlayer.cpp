@@ -47,6 +47,36 @@ ABasePlayer::ABasePlayer() : bIsAttacking(false), bCanAttack(true)
 	WeaponChildActor = CreateDefaultSubobject<UChildActorComponent>(FName("WeaponChildActor"));
 	WeaponChildActor->SetupAttachment(GetMesh());
 
+	TagManager = CreateDefaultSubobject<UTagManager>(FName("TagManager"));
+	StatusComponent = CreateDefaultSubobject<UStatusComponent>(FName("StatusComponent"));
+
+
+}
+
+void ABasePlayer::HandleStatusTag(FGameplayTag tag, bool bAdded)
+{
+	if(tag == FGameplayTag::RequestGameplayTag("Status.Stun"))
+	{
+		if(bAdded)
+		{
+			UE_LOG(Game, Warning, TEXT("Stun Status Added!"));
+		}
+		else
+		{
+			UE_LOG(Game, Warning, TEXT("Stun Status Removed!"));
+		}
+	}
+	else if(tag == FGameplayTag::RequestGameplayTag("Status.Slow"))
+	{
+		if(bAdded)
+		{
+			UE_LOG(Game, Warning, TEXT("Slow Status Added!"));
+		}
+		else
+		{
+			UE_LOG(Game, Warning, TEXT("Slow Status Removed!"));
+		}
+	}
 
 }
 
@@ -89,6 +119,15 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+
+
+		if (StatusComponent)
+		{
+			
+			StatusComponent->AddStatusTag.AddDynamic(this, &ABasePlayer::HandleStatusTag);
+		}
+	
+
 	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
 	if (AnimInstance)
 	{
@@ -102,6 +141,7 @@ void ABasePlayer::BeginPlay()
 	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::PlayerDamageCollision);
+
 }
 
 // Called every frame
@@ -137,10 +177,31 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void ABasePlayer::InputMove(const FInputActionValue& Value)
 {
+	if (TagManager)
+	{
+		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
+		{
+			return;
+		}
+
+		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Slow")))
+		{
+			const FVector2D movement = Value.Get<FVector2D>();
+			const FRotator moveRotation(0.0f, PlayerCamera->GetRelativeRotation().Yaw, 0.0f);
+			AddMovementInput(FRotationMatrix(moveRotation).GetScaledAxis(EAxis::Y), movement.X * 0.5f);
+			AddMovementInput(moveRotation.Vector(), movement.Y * 0.5f);
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(Game, Warning, TEXT("TagManager is not set!"));
+	}
+	
+
+
 	const FVector2D movement = Value.Get<FVector2D>();
 	const FRotator moveRotation(0.0f, PlayerCamera->GetRelativeRotation().Yaw, 0.0f);
-
-
 	AddMovementInput(FRotationMatrix(moveRotation).GetScaledAxis(EAxis::Y), movement.X);
 	AddMovementInput(moveRotation.Vector(), movement.Y);
 
@@ -155,6 +216,17 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
+	if(TagManager)
+	{
+		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
+		{
+			return;
+		}
+	}
+	else
+	{
+		UE_LOG(Game, Warning, TEXT("TagManager is not set!"));
+	}
 	if (!bIsAttacking) {
 
 		//Blueprint Function extending attack functionality
@@ -167,10 +239,36 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 			// Stops Character From Rotating
 			GetCharacterMovement()->bOrientRotationToMovement = false;
 
+			UpdateAttackAnimation();
+
 			// Starts Attack Animation
 			AttackStarted.Broadcast();
 			bIsAttacking = true;
 		}
+	}
+
+	void ABasePlayer::UpdateAttackAnimation()
+	{
+		if (AttackAnimations.Num() == 0) {
+			UE_LOG(Game, Error, TEXT("No animations set on the player!"));
+			return;
+		}
+
+		if (AnimInstance && AttackAnimations.IsValidIndex(AttackAnimationIndex)) {
+			bool bIsFullBody = false;
+			if (AttackAnimationIndex == AttackAnimations.Num() - 1) {
+				bIsFullBody = true;
+			}
+			
+			AnimInstance->SetAttackAnimation(AttackAnimations[AttackAnimationIndex], bIsFullBody);
+
+			if (AttackAnimationIndex < AttackAnimations.Num() - 1) {
+				AttackAnimationIndex++;
+			}
+			else
+				AttackAnimationIndex = 0;
+		}
+	}
 	}
 }
 

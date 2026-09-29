@@ -34,16 +34,26 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 	{
 		SelfTags = SelfTagManager->GetGameplayTagContainer();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelfTagManager is null for %s"), *GetOwner()->GetName());	
+
+	}
 
 	if(AttackerTagManager)
 	{
 		AttackerTags = AttackerTagManager->GetGameplayTagContainer();
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackerTagManager is null for %s"), *DamageCauser->GetName());	
+	}
 
 	if (SelfTagManager && AttackerTagManager)
 	{
 		
-
+		UE_LOG(LogTemp, Warning, TEXT("SelfTags: %s"), *SelfTags.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("AttackerTags: %s"), *AttackerTags.ToString());
 
 		if (SelfTags.HasTag(FGameplayTag::RequestGameplayTag("Element")) && AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element")))
 		{
@@ -95,7 +105,7 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 
 		}
 
-
+/*
 		if (AttackerTags.HasTag(FGameplayTag::RequestGameplayTag("Element.Fire")))
 		{
 			SelfTagManager->StatusRoll(FGameplayTag::RequestGameplayTag("Element.Fire"));
@@ -155,8 +165,42 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 
 			}
 
+		}*/
+	} 
+
+	if (AttackerTagManager)
+	{
+		FElementCombo* Combo = AttackerTagManager->ComboBuild(AttackerTags.GetByIndex(0));
+
+		if(Combo == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No combo triggered."));
+		}
+		else
+		{
+			if (Combo->bEndsCombo)
+			{
+				AttackerTagManager->EndCombo();
+			}
+
+			if (Combo->SelfOrEnemy)
+			{
+				SelfTagManager->StatusRoll(Combo->Result);
+			}
+			else
+			{
+				AttackerTagManager->StatusRoll(Combo->Result);
+			}
+
+			// -------- COMBO DISCOVERY UI BROADCAST --------
+			if (!Combo->bIsDiscovered)
+			{
+				Combo->bIsDiscovered = true;
+				OnComboDiscovered.Broadcast(*Combo);
+			}
 		}
 	}
+
 
 	
 	return DamageAmount;

@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
+#include "Components/ComboDataAsset.h"
 #include "HealthComponent.generated.h"
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnComboDiscovered, FElementCombo, DiscoveredCombo);
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SWORDER_API UHealthComponent : public UActorComponent
@@ -17,6 +17,10 @@ class SWORDER_API UHealthComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UHealthComponent();
+
+	// Exposing delegate, so the UI can listen to it
+	UPROPERTY(BlueprintAssignable, Category = "Combo Discovery")
+	FOnComboDiscovered OnComboDiscovered;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat")
 	float ProcessDamageType(float DamageAmount, AActor* DamageCauser);

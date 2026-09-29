@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Weapons/BaseWeapon.h"
+#include "Components/StatusComponent.h"
+#include "Components/TagManager.h"
 #include "BasePlayer.generated.h"
 
 
@@ -18,6 +20,9 @@ class SWORDER_API ABasePlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABasePlayer();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleStatusTag(FGameplayTag tag, bool bAdded);
 
 protected:
 	// Variables
@@ -38,6 +43,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName WeaponSocketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	UStatusComponent* StatusComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status")
+	UTagManager* TagManager;
+
+
+
 
 	UFUNCTION()
 	void EnableMovement(UAnimMontage* AnimMontage, bool bInterupted);
@@ -64,6 +78,12 @@ protected:
 	class UPlayerAnimInstance* AnimInstance;
 
 	FEventDispatch AttackStarted;
+
+	// Variables that allow for attack animations to be changed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<class UAnimSequence*> AttackAnimations;
+	int AttackAnimationIndex = 0;
+	void UpdateAttackAnimation();
 
 	// ----------------------------------------------------------------------------------- End Animation -----------------------------------------------------------------------------------
 
@@ -107,5 +127,6 @@ protected:
 	// Allows for attack functionality to be added in blueprint
 	UFUNCTION(BLueprintImplementableEvent, Blueprintcallable)
 	void Attack();
+
 
 };
