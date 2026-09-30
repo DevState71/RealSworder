@@ -216,7 +216,7 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
-	if(TagManager)
+	if (TagManager)
 	{
 		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
 		{
@@ -246,29 +246,29 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 			bIsAttacking = true;
 		}
 	}
+}
 
-	void ABasePlayer::UpdateAttackAnimation()
-	{
-		if (AttackAnimations.Num() == 0) {
-			UE_LOG(Game, Error, TEXT("No animations set on the player!"));
-			return;
-		}
-
-		if (AnimInstance && AttackAnimations.IsValidIndex(AttackAnimationIndex)) {
-			bool bIsFullBody = false;
-			if (AttackAnimationIndex == AttackAnimations.Num() - 1) {
-				bIsFullBody = true;
-			}
-			
-			AnimInstance->SetAttackAnimation(AttackAnimations[AttackAnimationIndex], bIsFullBody);
-
-			if (AttackAnimationIndex < AttackAnimations.Num() - 1) {
-				AttackAnimationIndex++;
-			}
-			else
-				AttackAnimationIndex = 0;
-		}
+void ABasePlayer::UpdateAttackAnimation()
+{
+	if (AttackAnimations.Num() == 0) {
+		UE_LOG(Game, Error, TEXT("No animations set on the player!"));
+		return;
 	}
+
+	if (AnimInstance && AttackAnimations.IsValidIndex(AttackAnimationIndex)) {
+		bool bIsFullBody = false;
+		if (AttackAnimationIndex == AttackAnimations.Num() - 1) {
+			bIsFullBody = true;
+		}
+		
+		AnimInstance->SetAttackAnimation(AttackAnimations[AttackAnimationIndex], bIsFullBody);
+
+		if (AttackAnimationIndex < AttackAnimations.Num() - 1) {
+			AttackAnimationIndex++;
+		}
+		else
+			AttackAnimationIndex = 0;
 	}
 }
+
 
