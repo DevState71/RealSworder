@@ -19,7 +19,7 @@
 
 
 // Sets default values
-ABasePlayer::ABasePlayer() : bIsAttacking(false)
+ABasePlayer::ABasePlayer() : bIsAttacking(false), bCanAttack(true)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -216,7 +216,7 @@ void ABasePlayer::InputLook(const FInputActionValue& Value)
 
 void ABasePlayer::InputAttack(const FInputActionValue& Value)
 {
-	if(TagManager)
+	if (TagManager)
 	{
 		if (TagManager->GameplayTagContainer.HasTag(FGameplayTag::RequestGameplayTag("Status.Stun")))
 		{
@@ -228,19 +228,23 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		UE_LOG(Game, Warning, TEXT("TagManager is not set!"));
 	}
 	if (!bIsAttacking) {
-		// Looks in the direction of the mouse
-		RotatePlayerTowardMouse();
 
-		// Stops Character From Rotating
-		GetCharacterMovement()->bOrientRotationToMovement = false;
+		//Blueprint Function extending attack functionality
+		Attack();
 
-		UpdateAttackAnimation();
+		if (bCanAttack) {
+			// Looks in the direction of the mouse
+			RotatePlayerTowardMouse();
 
-		// Starts Attack Animation
-		AttackStarted.Broadcast();
-		bIsAttacking = true;
+			// Stops Character From Rotating
+			GetCharacterMovement()->bOrientRotationToMovement = false;
 
-		
+			UpdateAttackAnimation();
+
+			// Starts Attack Animation
+			AttackStarted.Broadcast();
+			bIsAttacking = true;
+		}
 	}
 }
 
@@ -266,4 +270,5 @@ void ABasePlayer::UpdateAttackAnimation()
 			AttackAnimationIndex = 0;
 	}
 }
+
 

@@ -65,6 +65,8 @@ protected:
 	class UBoxComponent* DamageCollision;
 
 	bool bIsAttacking : 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bCanAttack;
 
 	UFUNCTION()
 	void PlayerDamageCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -122,6 +124,9 @@ protected:
 	class UInputAction* Input_Attack;
 
 	void InputAttack(const FInputActionValue& Value);
+	// Allows for attack functionality to be added in blueprint
+	UFUNCTION(BLueprintImplementableEvent, Blueprintcallable)
+	void Attack();
 
 
 };
