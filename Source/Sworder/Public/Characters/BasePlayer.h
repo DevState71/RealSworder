@@ -84,6 +84,8 @@ protected:
 	TArray<class UAnimSequence*> AttackAnimations;
 	int AttackAnimationIndex = 0;
 	void UpdateAttackAnimation();
+	UFUNCTION(BlueprintCallable)
+	void PlayAttackAnimation();
 
 	// ----------------------------------------------------------------------------------- End Animation -----------------------------------------------------------------------------------
 

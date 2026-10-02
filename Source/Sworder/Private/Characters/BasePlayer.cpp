@@ -233,17 +233,9 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		Attack();
 
 		if (bCanAttack) {
-			// Looks in the direction of the mouse
-			RotatePlayerTowardMouse();
+			// The Play Attack Animation function will be called in blueprints
 
-			// Stops Character From Rotating
-			GetCharacterMovement()->bOrientRotationToMovement = false;
-
-			UpdateAttackAnimation();
-
-			// Starts Attack Animation
-			AttackStarted.Broadcast();
-			bIsAttacking = true;
+			
 		}
 	}
 }
@@ -269,6 +261,21 @@ void ABasePlayer::UpdateAttackAnimation()
 		else
 			AttackAnimationIndex = 0;
 	}
+}
+
+void ABasePlayer::PlayAttackAnimation()
+{
+	// Looks in the direction of the mouse
+	RotatePlayerTowardMouse();
+
+	// Stops Character From Rotating
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	UpdateAttackAnimation();
+
+	// Starts Attack Animation
+	AttackStarted.Broadcast();
+	bIsAttacking = true;
 }
 
 
