@@ -28,10 +28,10 @@ void UPlayerAnimInstance::AttackAnimation_Implementation()
 		UAnimMontage* attack = nullptr;
 
 		if (bIsFullBody) {
-			attack = this->PlaySlotAnimationAsDynamicMontage(AttackSequence, FName("Full_Body"));
+			attack = this->PlaySlotAnimationAsDynamicMontage(AttackSequence, FName("Full_Body"), 0.25, 0.25, 1.5);
 		}
 		else
-			attack = this->PlaySlotAnimationAsDynamicMontage(AttackSequence, FName("Attack"));
+			attack = this->PlaySlotAnimationAsDynamicMontage(AttackSequence, FName("Attack"), 0.25, 0.25, 1.5);
 		this->Montage_SetEndDelegate(AttackEnded, attack);
 	}
 	else
