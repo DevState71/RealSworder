@@ -8,6 +8,8 @@
 
 void AGamePlayerController::BeginPlay()
 {
+	FInputModeGameOnly InputMode;
+	this->SetInputMode(InputMode);
 	this->SetShowMouseCursor(true);
 
 }
