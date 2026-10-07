@@ -22,16 +22,99 @@ public:
 	UStatusComponent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float BlizzardTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
 	float BurnTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float BurstTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float CharTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ChargeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ConductorTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float CrystalizeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float EarthquakeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float EmberTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float EnergizeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float EntombTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ExplodeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ExtinguishTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float FractureTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float FreezeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float HyperchargeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float LavaTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float MagmaTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float MeltTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float OverchargeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ShieldTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ShockwaveTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float SingeTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
 	float SlowTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float SmolderTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float StaggerTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float StormTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
 	float StunTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
-	float ShieldTimer;
+	float SuperchargeTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float SuperheatTimer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Timers")
+	float ThunderboltTimer;
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Numbers")
 	float BurnDamageTick;
@@ -42,10 +125,37 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Status Numbers")
 	float ShieldAmount;
 
+	FTimerHandle BlizzardTimerHandle;
 	FTimerHandle BurnTimerHandle;
-	FTimerHandle SlowTimerHandle;
-	FTimerHandle StunTimerHandle;
+	FTimerHandle BurstTimerHandle;
+	FTimerHandle CharTimerHandle;
+	FTimerHandle ChargeTimerHandle;
+	FTimerHandle ConductorTimerHandle;
+	FTimerHandle CrystalizeTimerHandle;
+	FTimerHandle EarthquakeTimerHandle;
+	FTimerHandle EmberTimerHandle;
+	FTimerHandle EnergizeTimerHandle;
+	FTimerHandle EntombTimerHandle;
+	FTimerHandle ExplodeTimerHandle;
+	FTimerHandle ExtinguishTimerHandle;
+	FTimerHandle FractureTimerHandle;
+	FTimerHandle FreezeTimerHandle;
+	FTimerHandle HyperchargeTimerHandle;
+	FTimerHandle LavaTimerHandle;
+	FTimerHandle MagmaTimerHandle;
+	FTimerHandle MeltTimerHandle;
+	FTimerHandle OverchargeTimerHandle;
 	FTimerHandle ShieldTimerHandle;
+	FTimerHandle ShockwaveTimerHandle;
+	FTimerHandle SingeTimerHandle;
+	FTimerHandle SlowTimerHandle;
+	FTimerHandle SmolderTimerHandle;
+	FTimerHandle StaggerTimerHandle;
+	FTimerHandle StormTimerHandle;
+	FTimerHandle StunTimerHandle;
+	FTimerHandle SuperchargeTimerHandle;
+	FTimerHandle SuperheatTimerHandle;
+	FTimerHandle ThunderboltTimerHandle;
 
 	FTimerHandle BurnDamageTickHandle;
 
@@ -63,13 +173,97 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Status")
 	FActorDifferentiation AddStatusTag;
 	
+	void AddBlizzard();
+	void RemoveBlizzard();
+
 	void AddBurn();
 	void RemoveBurn();
 	void BurnDamageTickFunction();
-	void AddSlow();
-	void RemoveSlow();
-	void AddStun();
-	void RemoveStun();
+
+	void AddBurst();
+	void RemoveBurst();
+
+	void AddChar();
+	void RemoveChar();
+
+	void AddCharge();
+	void RemoveCharge();
+
+	void AddConductor();
+	void RemoveConductor();
+
+	void AddCrystalize();
+	void RemoveCrystalize();
+
+	void AddEarthquake();
+	void RemoveEarthquake();
+
+	void AddEmber();
+	void RemoveEmber();
+
+	void AddEnergize();
+	void RemoveEnergize();
+
+	void AddEntomb();
+	void RemoveEntomb();
+
+	void AddExplode();
+	void RemoveExplode();
+
+	void AddExtinguish();
+	void RemoveExtinguish();
+
+	void AddFracture();
+	void RemoveFracture();
+
+	void AddFreeze();
+	void RemoveFreeze();
+
+	void AddHypercharge();
+	void RemoveHypercharge();
+
+	void AddLava();
+	void RemoveLava();
+
+	void AddMagma();
+	void RemoveMagma();
+
+	void AddMelt();
+	void RemoveMelt();
+
+	void AddOvercharge();
+	void RemoveOvercharge();
+
 	void AddShield();
 	void RemoveShield();
+
+	void AddShockwave();
+	void RemoveShockwave();
+
+	void AddSinge();
+	void RemoveSinge();
+
+	void AddSlow();
+	void RemoveSlow();
+
+	void AddSmolder();
+	void RemoveSmolder();
+
+	void AddStagger();
+	void RemoveStagger();
+
+	void AddStorm();
+	void RemoveStorm();
+
+	void AddStun();
+	void RemoveStun();
+
+	void AddSupercharge();
+	void RemoveSupercharge();
+
+	void AddSuperheat();
+	void RemoveSuperheat();
+
+	void AddThunderbolt();
+	void RemoveThunderbolt();
 };
