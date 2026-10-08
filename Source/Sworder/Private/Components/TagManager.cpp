@@ -73,7 +73,7 @@ FElementCombo* UTagManager::ComboBuild(FGameplayTag Tag)
 		ComboTime,
 		false
 	);
-
+		
 	return Result;
 }
 
@@ -90,6 +90,11 @@ FElementCombo* UTagManager::TriggerCombo()
 	
 	UE_LOG(LogTemp, Warning, TEXT("TriggerCombo called with %d combo tags"), ComboTags.Num());
 
+	if(ComboDataAsset == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ComboDataAsset is not assigned in TagManager on %s"), *GetOwner()->GetName());
+		return nullptr;
+	}
 for(FElementCombo& StoredCombo : ComboDataAsset->StoredCombos)
 	{
 		if(StoredCombo.ComboSequence == this->ComboTags)
