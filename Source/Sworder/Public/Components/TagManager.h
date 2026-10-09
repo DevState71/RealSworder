@@ -9,7 +9,7 @@
 #include "TagManager.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStatusTagging, FGameplayTag, Tag, bool, bAdded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatusTagging, FGameplayTag, Tag, bool, bAdded, AActor*, ComboCauser);
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SWORDER_API UTagManager : public UActorComponent
@@ -46,7 +46,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void StatusRoll(FGameplayTag tag);
+	void StatusRoll(FGameplayTag tag, AActor* ComboCauser);
 
 
 	FElementCombo* ComboBuild(FGameplayTag tag);
@@ -63,5 +63,5 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "Tags")
-	void AddGameplayTag(FGameplayTag tag);
+	void AddGameplayTag(FGameplayTag tag, AActor* ComboCauser);
 };

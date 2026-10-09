@@ -40,7 +40,7 @@ void UTagManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	// ...
 }
 
-void UTagManager::StatusRoll(FGameplayTag tag)
+void UTagManager::StatusRoll(FGameplayTag tag, AActor* comboCauser)
 {
 	UE_LOG(LogTemp, Warning, TEXT("StatusRoll called with tag: %s"), *tag.ToString());
 
@@ -48,7 +48,7 @@ void UTagManager::StatusRoll(FGameplayTag tag)
 
 	if (RandomNumber <= StatusChance)
 	{
-		AddGameplayTag(tag);
+		AddGameplayTag(tag, comboCauser);
 		UE_LOG(LogTemp, Warning, TEXT("StatusRoll succeeded with tag: %s"), *tag.ToString());
 	
 
@@ -134,13 +134,13 @@ void UTagManager::EndCombo()
 	UE_LOG(LogTemp, Warning, TEXT("Combo ended."));
 }
 
-void UTagManager::AddGameplayTag(FGameplayTag tag)
+void UTagManager::AddGameplayTag(FGameplayTag tag, AActor* ComboCauser)
 {
 	if(!GameplayTagContainer.HasTag(tag))
 	{
 		GameplayTagContainer.AddTag(tag);
 
-		AddStatusTag.Broadcast(tag, true);
+		AddStatusTag.Broadcast(tag, true, ComboCauser);
 	}
 }
 

@@ -41,7 +41,7 @@ void UStatusComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 
-void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded)
+void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* ComboCauser)
 {
 
 	if (tag == FGameplayTag::RequestGameplayTag("Status.Blizzard"))
@@ -136,7 +136,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded)
 	{
 		if (bAdded)
 		{
-			AddEmber();
+			AddEmber(ComboCauser);
 		}
 		else
 		{
@@ -504,14 +504,39 @@ void UStatusComponent::RemoveEarthquake()
 	// Remove Earthquake logic here
 }
 
-void UStatusComponent::AddEmber()
+void UStatusComponent::AddEmber(AActor* ComboCauser)
 {
-	// Add Ember logic here
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag EmberTag = FGameplayTag::RequestGameplayTag("Status.Ember");
+
+	OnStatusEffectAreaRequested.Broadcast(EmberTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(EmberTimerHandle, this, &UStatusComponent::RemoveEmber, EmberTimer, false);
 }
 
 void UStatusComponent::RemoveEmber()
 {
 	// Remove Ember logic here
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag EmberTag = FGameplayTag::RequestGameplayTag("Status.Ember");
+
+	OnStatusEffectAreaRequested.Broadcast(EmberTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Ember")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Ember"));
+	}
+
 }
 
 void UStatusComponent::AddEnergize()
