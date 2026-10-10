@@ -18,7 +18,7 @@ struct FElementCombo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
 	bool bEndsCombo = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
-	bool SelfOrEnemy = false;
+	bool bSelf = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combo")
 	bool bIsDiscovered = false;
 };

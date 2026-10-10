@@ -243,7 +243,7 @@ void UComboDataAsset::AddCombo(
 
     NewCombo.ComboSequence = Sequence;
     NewCombo.Result = Result;
-    NewCombo.SelfOrEnemy = bSelfTarget;
+    NewCombo.bSelf = bSelfTarget;
     NewCombo.bEndsCombo = bEndsCombo;
 
     StoredCombos.Add(NewCombo);
