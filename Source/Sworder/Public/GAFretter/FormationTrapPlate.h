@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "FormationTrapPlate.generated.h"
 
+class USplineComponent;
 class UNiagaraSystem;
 class UBoxComponent;
 
@@ -23,7 +24,8 @@ enum class EFormationShape : uint8
 	Pentagon UMETA(DisplayName = "Pentagon"),
 	Hexagon UMETA(DisplayName = "Hexagon"),
 	Octagon UMETA(DisplayName = "Octagon"),
-	Random UMETA(DisplayName = "Random")
+	Random UMETA(DisplayName = "Random"),
+	Spline UMETA(DisplayName = "Spline Path")
 };
 
 USTRUCT(BlueprintType)
@@ -54,6 +56,16 @@ struct FFormationWave
 
 	UPROPERTY(EditAnywhere, Category = "Wave Definition", meta = (UIMin = "0.0", UIMax = "360.0"))
 	float FormationRotation = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Wave Definition")
+	bool bFacePlayer = true;
+
+	UPROPERTY(EditAnywhere, Category = "Wave Definition", meta = (EditCondition = "!bFacePlayer", MakeEditWidget = true))
+	FVector CustomFacingPoint = FVector(500.0f, 0.0f, 0.0f);
+
+	// How long the warning telegraph lingers before the first enemy actually spawns
+	UPROPERTY(EditAnywhere, Category = "Wave Definition")
+	float TelegraphDelay = 1.5f;
 
 	// Delay between individual enemy spawns within THIS wave
 	UPROPERTY(EditAnywhere, Category = "Wave Timing", meta = (ClampMin = "0.0"))
@@ -88,6 +100,26 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// ===============================
+	// NATIVE OBJECT POOLING
+	// ===============================
+
+	// Flat array to hold per-spawned enemies, so they do not hog up memory space
+	UPROPERTY()
+	TArray<AActor*> PooledEnemies;
+
+	// Tallies up the required enemies and spawns them under the map when the level loads
+	void InitializeObjectPool();
+
+	// Pulls a sleeping enemy from the array, or spawns an emergency backup if the pool is empty
+	AActor* GetEnemyFromPool(TSubclassOf<AActor> EnemyClass);
+
+	// -------------------------------
+
+	// Spline used for custom drawn ambush paths
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USplineComponent* AmbushSpline;
+
 	// Add as many waves as you want here! They will spawn sequentially.
 	UPROPERTY(EditAnywhere, Category = "Spawning|Waves")
 	TArray<FFormationWave> Waves;
@@ -113,6 +145,13 @@ protected:
 	// Sound effect on spawn
 	UPROPERTY(EditAnywhere, Category = "Spawning|Effects")
 	USoundBase* SpawnSound;
+
+	// VFX For Pre-Spawn Warning Telegraph
+	UPROPERTY(EditAnywhere, Category = "Spawning|Effects")
+	UNiagaraSystem* TelegraphVFX;
+
+	// Actual spawn execution function that fires after the telegraph finishes
+	void ExecuteSpawn(TSubclassOf<AActor> ClassToSpawn, FVector SpawnLocation, FRotator SpawnRotation);
 
 	UPROPERTY(EditAnywhere, Category = "Spawning|Navigator")
 	bool bProjectToNavMesh = true;
