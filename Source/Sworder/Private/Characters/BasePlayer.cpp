@@ -118,11 +118,7 @@ void ABasePlayer::SetDamageCollision(bool bCollision)
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
-	Super::BeginPlay();
 	
-	
-
-
 		if (StatusComponent)
 		{
 			
@@ -143,6 +139,8 @@ void ABasePlayer::BeginPlay()
 	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::PlayerDamageCollision);
+
+	Super::BeginPlay();
 
 }
 
@@ -235,17 +233,9 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 		Attack();
 
 		if (bCanAttack) {
-			// Looks in the direction of the mouse
-			RotatePlayerTowardMouse();
+			// The Play Attack Animation function will be called in blueprints
 
-			// Stops Character From Rotating
-			GetCharacterMovement()->bOrientRotationToMovement = false;
-
-			UpdateAttackAnimation();
-
-			// Starts Attack Animation
-			AttackStarted.Broadcast();
-			bIsAttacking = true;
+			
 		}
 	}
 }
@@ -271,6 +261,21 @@ void ABasePlayer::UpdateAttackAnimation()
 		else
 			AttackAnimationIndex = 0;
 	}
+}
+
+void ABasePlayer::PlayAttackAnimation()
+{
+	// Looks in the direction of the mouse
+	RotatePlayerTowardMouse();
+
+	// Stops Character From Rotating
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	UpdateAttackAnimation();
+
+	// Starts Attack Animation
+	AttackStarted.Broadcast();
+	bIsAttacking = true;
 }
 
 
