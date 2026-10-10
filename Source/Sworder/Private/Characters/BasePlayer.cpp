@@ -118,11 +118,7 @@ void ABasePlayer::SetDamageCollision(bool bCollision)
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
-	Super::BeginPlay();
 	
-	
-
-
 		if (StatusComponent)
 		{
 			
@@ -143,6 +139,8 @@ void ABasePlayer::BeginPlay()
 	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::PlayerDamageCollision);
+
+	Super::BeginPlay();
 
 }
 
