@@ -46,13 +46,17 @@ void UTagManager::StatusRoll(FGameplayTag tag, AActor* comboCauser)
 
 	int32 RandomNumber = FMath::RandRange(1, 100);
 
-	if (RandomNumber <= StatusChance)
+	if (StatusChance)
 	{
-		AddGameplayTag(tag, comboCauser);
-		UE_LOG(LogTemp, Warning, TEXT("StatusRoll succeeded with tag: %s"), *tag.ToString());
-	
+		if (RandomNumber <= StatusChance)
+		{
+			AddGameplayTag(tag, comboCauser);
+			UE_LOG(LogTemp, Warning, TEXT("StatusRoll succeeded with tag: %s"), *tag.ToString());
 
+
+		}
 	}
+	
 }
 
 FElementCombo* UTagManager::ComboBuild(FGameplayTag Tag)
