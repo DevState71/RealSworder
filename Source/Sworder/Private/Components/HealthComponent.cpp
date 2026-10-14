@@ -183,13 +183,14 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 				AttackerTagManager->EndCombo();
 			}
 
-			if (Combo->SelfOrEnemy)
+			if (Combo->bSelf)
 			{
-				SelfTagManager->StatusRoll(Combo->Result);
+				AttackerTagManager->StatusRoll(Combo->Result, DamageCauser);
+				
 			}
 			else
 			{
-				AttackerTagManager->StatusRoll(Combo->Result);
+				SelfTagManager->StatusRoll(Combo->Result, DamageCauser);
 			}
 
 			// -------- COMBO DISCOVERY UI BROADCAST --------

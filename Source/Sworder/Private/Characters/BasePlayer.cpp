@@ -12,6 +12,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "InputAction.h"
+#include "Components/ComboDataAsset.h"
 #include "Utility/GamePlayerController.h"
 #include "Animations/PlayerAnimInstance.h"
 #include "Components/BoxComponent.h"
@@ -47,7 +48,7 @@ ABasePlayer::ABasePlayer() : bIsAttacking(false), bCanAttack(true)
 	WeaponChildActor = CreateDefaultSubobject<UChildActorComponent>(FName("WeaponChildActor"));
 	WeaponChildActor->SetupAttachment(GetMesh());
 
-	TagManager = CreateDefaultSubobject<UTagManager>(FName("TagManager"));
+	
 	StatusComponent = CreateDefaultSubobject<UStatusComponent>(FName("StatusComponent"));
 
 
@@ -117,10 +118,7 @@ void ABasePlayer::SetDamageCollision(bool bCollision)
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
-	Super::BeginPlay();
 	
-
-
 		if (StatusComponent)
 		{
 			
@@ -141,6 +139,8 @@ void ABasePlayer::BeginPlay()
 	Weapon = Cast<ABaseWeapon>(WeaponChildActor->GetChildActor());
 
 	DamageCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::PlayerDamageCollision);
+
+	Super::BeginPlay();
 
 }
 
