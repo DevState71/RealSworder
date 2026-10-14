@@ -456,12 +456,22 @@ void UStatusComponent::RemoveBurst()
 
 void UStatusComponent::AddChar()
 {
-	// Add Char logic here
+	AddStatusTag.Broadcast(FGameplayTag::RequestGameplayTag("Status.Char"), true);
+	UE_LOG(LogTemp, Warning, TEXT("Charred!"));
+	GetWorld()->GetTimerManager().SetTimer(CharTimerHandle, this, &UStatusComponent::RemoveChar, CharTimer, false);
 }
 
 void UStatusComponent::RemoveChar()
 {
-	// Remove Char logic here
+	AddStatusTag.Broadcast(FGameplayTag::RequestGameplayTag("Status.Char"), false);
+	UE_LOG(LogTemp, Warning, TEXT("Char removed!"));
+	GetWorld()->GetTimerManager().ClearTimer(CharTimerHandle);
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Char")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Char"));
+	}
 }
 
 void UStatusComponent::AddCharge()
@@ -511,9 +521,11 @@ void UStatusComponent::AddEmber(AActor* ComboCauser)
 	{
 		return;
 	}
+	
 
 	const FGameplayTag EmberTag = FGameplayTag::RequestGameplayTag("Status.Ember");
-
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
 	OnStatusEffectAreaRequested.Broadcast(EmberTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
 	GetWorld()->GetTimerManager().SetTimer(EmberTimerHandle, this, &UStatusComponent::RemoveEmber, EmberTimer, false);
 }
