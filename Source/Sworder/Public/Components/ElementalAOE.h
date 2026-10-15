@@ -41,6 +41,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AOE")
 	TObjectPtr<AActor> ComboSource;
 
+	TArray<AActor*> HitActors;
+
 
 public:	
 	// Called every frame

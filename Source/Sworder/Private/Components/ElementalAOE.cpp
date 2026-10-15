@@ -21,6 +21,8 @@ AElementalAOE::AElementalAOE()
 	CollisionSphere->SetGenerateOverlapEvents(true);
 	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AElementalAOE::OnSphereOverlapBegin);	
 
+	
+
 }
 
 // Called when the game starts or when spawned
@@ -73,6 +75,7 @@ void AElementalAOE::ActivateAOE()
 			}
 			else
 			{
+				HitActors.Add(OverlappingActor);
 				UE_LOG(LogTemp, Warning, TEXT("Processing Overlapping Actor: %s"), *OverlappingActor->GetName());
 				ProcessOverlap(OverlappingActor, StatusToApply);
 			}
@@ -95,6 +98,7 @@ void AElementalAOE::InitializeAOE(AActor* InEffectSource, AActor* InComboSource,
 		Radius, 
 		*StatusToApply.ToString());
 
+	SetLifeSpan(0.1f); // Set lifespan to 0.1 seconds
 	ActivateAOE();
 }
 
@@ -109,6 +113,14 @@ void AElementalAOE::ProcessOverlap(AActor* OtherActor, FGameplayTag InStatusToAp
 	if(OtherActor == ComboSource)
 	{
 		return;
+	}
+
+	for(AActor* Actor : HitActors)
+	{
+		if (Actor == OtherActor)
+		{
+			return; // Already processed this actor
+		}
 	}
 
 	if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Ember"))
