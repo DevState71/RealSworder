@@ -10,6 +10,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActorDifferentiation, FGameplayTag, Tag, bool, bAdded);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FiveParams(FStatusEffectAreaRequested, FGameplayTag, Tag, bool, bAdded, AActor*, ComboCauser, AActor*, EffectSource, FVector, EffectLocation);
+
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SWORDER_API UStatusComponent : public UActorComponent
 {
@@ -168,11 +170,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable, Category = "Status")
-	void HandleStatusTag(FGameplayTag tag, bool bAdded);
+	void HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* ComboCauser);
 
 	UPROPERTY(BlueprintAssignable, Category = "Status")
 	FActorDifferentiation AddStatusTag;
 	
+	UPROPERTY(BlueprintAssignable, Category = "Status")
+	FStatusEffectAreaRequested OnStatusEffectAreaRequested;
+
 	void AddBlizzard();
 	void RemoveBlizzard();
 
@@ -198,7 +203,7 @@ public:
 	void AddEarthquake();
 	void RemoveEarthquake();
 
-	void AddEmber();
+	void AddEmber(AActor* ComboCauser);
 	void RemoveEmber();
 
 	void AddEnergize();

@@ -27,6 +27,18 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 
 	UTagManager* AttackerTagManager = DamageCauser->FindComponentByClass<UTagManager>();
 
+	if(!IsValid(SelfTagManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelfTagManager is not valid for %s"), *GetOwner()->GetName());
+		return DamageAmount;
+	}
+
+	if(!IsValid(AttackerTagManager))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AttackerTagManager is not valid for %s"), *DamageCauser->GetName());
+		return DamageAmount;
+	}
+
 	FGameplayTagContainer SelfTags;
 	FGameplayTagContainer AttackerTags;
 
@@ -183,13 +195,15 @@ float UHealthComponent::ProcessDamageType_Implementation(float DamageAmount, AAc
 				AttackerTagManager->EndCombo();
 			}
 
-			if (Combo->SelfOrEnemy)
+			if (Combo->bSelf)
 			{
-				SelfTagManager->StatusRoll(Combo->Result);
+				AttackerTagManager->StatusRoll(Combo->Result, DamageCauser);
+				
 			}
 			else
 			{
-				AttackerTagManager->StatusRoll(Combo->Result);
+				UE_LOG(LogTemp, Warning, TEXT("Damage Causer: %s"), *DamageCauser->GetName());
+				SelfTagManager->StatusRoll(Combo->Result, DamageCauser);
 			}
 
 			// -------- COMBO DISCOVERY UI BROADCAST --------

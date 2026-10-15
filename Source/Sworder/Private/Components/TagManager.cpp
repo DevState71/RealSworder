@@ -40,19 +40,23 @@ void UTagManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 	// ...
 }
 
-void UTagManager::StatusRoll(FGameplayTag tag)
+void UTagManager::StatusRoll(FGameplayTag tag, AActor* comboCauser)
 {
 	UE_LOG(LogTemp, Warning, TEXT("StatusRoll called with tag: %s"), *tag.ToString());
 
 	int32 RandomNumber = FMath::RandRange(1, 100);
 
-	if (RandomNumber <= StatusChance)
+	if (StatusChance)
 	{
-		AddGameplayTag(tag);
-		UE_LOG(LogTemp, Warning, TEXT("StatusRoll succeeded with tag: %s"), *tag.ToString());
-	
+		if (RandomNumber <= StatusChance)
+		{
+			AddGameplayTag(tag, comboCauser);
+			UE_LOG(LogTemp, Warning, TEXT("StatusRoll succeeded with tag: %s"), *tag.ToString());
 
+
+		}
 	}
+	
 }
 
 FElementCombo* UTagManager::ComboBuild(FGameplayTag Tag)
@@ -73,7 +77,7 @@ FElementCombo* UTagManager::ComboBuild(FGameplayTag Tag)
 		ComboTime,
 		false
 	);
-
+		
 	return Result;
 }
 
@@ -90,6 +94,11 @@ FElementCombo* UTagManager::TriggerCombo()
 	
 	UE_LOG(LogTemp, Warning, TEXT("TriggerCombo called with %d combo tags"), ComboTags.Num());
 
+	if(ComboDataAsset == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ComboDataAsset is not assigned in TagManager on %s"), *GetOwner()->GetName());
+		return nullptr;
+	}
 for(FElementCombo& StoredCombo : ComboDataAsset->StoredCombos)
 	{
 		if(StoredCombo.ComboSequence == this->ComboTags)
@@ -129,13 +138,13 @@ void UTagManager::EndCombo()
 	UE_LOG(LogTemp, Warning, TEXT("Combo ended."));
 }
 
-void UTagManager::AddGameplayTag(FGameplayTag tag)
+void UTagManager::AddGameplayTag(FGameplayTag tag, AActor* ComboCauser)
 {
 	if(!GameplayTagContainer.HasTag(tag))
 	{
 		GameplayTagContainer.AddTag(tag);
 
-		AddStatusTag.Broadcast(tag, true);
+		AddStatusTag.Broadcast(tag, true, ComboCauser);
 	}
 }
 
