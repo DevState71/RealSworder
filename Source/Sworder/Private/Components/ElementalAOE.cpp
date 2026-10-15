@@ -21,7 +21,7 @@ AElementalAOE::AElementalAOE()
 	CollisionSphere->SetGenerateOverlapEvents(true);
 	CollisionSphere->OnComponentBeginOverlap.AddDynamic(this, &AElementalAOE::OnSphereOverlapBegin);	
 
-	InitialLifeSpan = 0.1f; // Set lifespan to 0.1 seconds
+	
 
 }
 
@@ -98,6 +98,7 @@ void AElementalAOE::InitializeAOE(AActor* InEffectSource, AActor* InComboSource,
 		Radius, 
 		*StatusToApply.ToString());
 
+	SetLifeSpan(0.1f); // Set lifespan to 0.1 seconds
 	ActivateAOE();
 }
 
