@@ -98,7 +98,7 @@ void AElementalAOE::InitializeAOE(AActor* InEffectSource, AActor* InComboSource,
 		Radius, 
 		*StatusToApply.ToString());
 
-	SetLifeSpan(0.1f); // Set lifespan to 0.1 seconds
+	SetLifeSpan(LifeSpan); // Set lifespan to 0.1 seconds
 	ActivateAOE();
 }
 
