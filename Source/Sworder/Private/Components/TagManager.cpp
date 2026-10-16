@@ -140,11 +140,61 @@ void UTagManager::EndCombo()
 
 void UTagManager::AddGameplayTag(FGameplayTag tag, AActor* ComboCauser)
 {
+	if(ComboCauser == nullptr)
+	{
+		AddElementGameplayTag(tag);
+		UE_LOG(LogTemp, Warning, TEXT("AddGameplayTag called with null ComboCauser, adding tag: %s"), *tag.ToString());
+	}
+
 	if(!GameplayTagContainer.HasTag(tag))
 	{
 		GameplayTagContainer.AddTag(tag);
 
 		AddStatusTag.Broadcast(tag, true, ComboCauser);
+	}
+}
+
+void UTagManager::RemoveGameplayTag(FGameplayTag tag, AActor* ComboCauser)
+{
+	if(GameplayTagContainer.HasTag(tag))
+	{
+		GameplayTagContainer.RemoveTag(tag);
+		AddStatusTag.Broadcast(tag, false, ComboCauser);
+	}
+
+}
+
+void UTagManager::AddElementGameplayTag(FGameplayTag tag)
+{
+	if (!GameplayTagContainer.HasTag(tag))
+	{
+		GameplayTagContainer.AddTag(tag);
+	}
+}
+
+void UTagManager::AddRandomElementTag()
+{
+	int RandomIndex = FMath::RandRange(0, 9);
+
+	if(RandomIndex == 0)
+	{
+		AddGameplayTag(FGameplayTag::RequestGameplayTag("Element.Fire"), nullptr);
+	}
+	else if(RandomIndex == 1)
+	{
+		AddGameplayTag(FGameplayTag::RequestGameplayTag("Element.Ice"), nullptr);
+	}
+	else if(RandomIndex == 2)
+	{
+		AddGameplayTag(FGameplayTag::RequestGameplayTag("Element.Earth"), nullptr);
+	}
+	else if(RandomIndex == 3)
+	{
+		AddGameplayTag(FGameplayTag::RequestGameplayTag("Element.Lightning"), nullptr);
+	}
+	else if(RandomIndex >= 4)
+	{
+		AddGameplayTag(FGameplayTag::RequestGameplayTag("Element.Neutral"), nullptr);
 	}
 }
 

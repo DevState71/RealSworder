@@ -63,5 +63,15 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "Tags")
-	void AddGameplayTag(FGameplayTag tag, AActor* ComboCauser);
+	virtual void AddGameplayTag(FGameplayTag tag, AActor* ComboCauser);
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	void RemoveGameplayTag(FGameplayTag tag, AActor* ComboCauser);
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	virtual void AddElementGameplayTag(FGameplayTag tag);
+
+	UFUNCTION(BlueprintCallable, Category = "Tags")
+	void AddRandomElementTag();
+
 };
