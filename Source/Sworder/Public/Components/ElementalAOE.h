@@ -41,6 +41,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AOE")
 	TObjectPtr<AActor> ComboSource;
 
+	TArray<AActor*> HitActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AOE")
+	float LifeSpan = 5.0f; // Default lifespan of the AOE actor
+
 
 public:	
 	// Called every frame
@@ -48,6 +53,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AOE")
 	void InitializeAOE(AActor* InEffectSource, AActor* InComboSource, float InDamage, float InRadius, FGameplayTag InStatusToApply);
+
+	UFUNCTION(BlueprintCallable, Category = "AOE")
+	void ActivateAOE();
 
 	UFUNCTION(BlueprintCallable, Category = "AOE")
 	void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

@@ -5,6 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/TagManager.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -43,6 +44,45 @@ void ABaseWeapon::SetWeaponVariables(float newDamage, float newSliceSpeed, float
 float ABaseWeapon::GetDamage()
 {
 	return Damage;
+}
+
+void ABaseWeapon::UpdatePlayerTags()
+{
+	AActor* OwnerActor = GetOwner();
+
+	if (!OwnerActor)
+	{
+
+		UE_LOG(LogTemp, Error, TEXT("OwnerActor is null in UpdatePlayerTags"));
+		return;
+	}
+	UTagManager* PlayerTagManager = GetOwner()->FindComponentByClass<UTagManager>();
+
+	UTagManager* WeaponTagManager = FindComponentByClass<UTagManager>();
+
+	if(PlayerTagManager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerTagManager is null in UpdatePlayerTags"));
+		return;
+	}
+
+	if(WeaponTagManager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeaponTagManager is null in UpdatePlayerTags"));
+		return;
+	}
+
+	for(FGameplayTag tag : PlayerTagManager->GetGameplayTagContainer())
+	{
+		PlayerTagManager->RemoveGameplayTag(tag, this);
+	}
+
+	for(FGameplayTag tag : WeaponTagManager->GetGameplayTagContainer())
+	{
+		PlayerTagManager->AddGameplayTag(tag, this);
+	}
+
+
 }
 
 void ABaseWeapon::WeaponCollision(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
