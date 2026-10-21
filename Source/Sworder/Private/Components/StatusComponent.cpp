@@ -48,7 +48,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddBlizzard();
+			AddBlizzard(ComboCauser);
 		}
 		else
 		{
@@ -103,7 +103,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddConductor();
+			AddConductor(ComboCauser);
 		}
 		else
 		{
@@ -125,7 +125,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddEarthquake();
+			AddEarthquake(ComboCauser);
 		}
 		else
 		{
@@ -169,7 +169,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddExplode();
+			AddExplode(ComboCauser);
 		}
 		else
 		{
@@ -213,7 +213,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddHypercharge();
+			AddHypercharge(ComboCauser);
 		}
 		else
 		{
@@ -224,7 +224,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddLava();
+			AddLava(ComboCauser);
 		}
 		else
 		{
@@ -279,7 +279,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddShockwave();
+			AddShockwave(ComboCauser);
 		}
 		else
 		{
@@ -312,7 +312,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddSmolder();
+			AddSmolder(ComboCauser);
 		}
 		else
 		{
@@ -334,7 +334,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddStorm();
+			AddStorm(ComboCauser);
 		}
 		else
 		{
@@ -356,7 +356,7 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 	{
 		if (bAdded)
 		{
-			AddSupercharge();
+			AddSupercharge(ComboCauser);
 		}
 		else
 		{
@@ -396,14 +396,42 @@ void UStatusComponent::HandleStatusTag(FGameplayTag tag, bool bAdded, AActor* Co
 
 
 
-void UStatusComponent::AddBlizzard()
+void UStatusComponent::AddBlizzard(AActor* ComboCauser)
 {
 	// Add Blizzard logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag BlizzardTag = FGameplayTag::RequestGameplayTag("Status.Blizzard");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(BlizzardTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(BlizzardTimerHandle, this, &UStatusComponent::RemoveBlizzard, BlizzardTimer, false);
 }
 
 void UStatusComponent::RemoveBlizzard()
 {
-	// Remove Blizzard logic here
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag BlizzardTag = FGameplayTag::RequestGameplayTag("Status.Blizzard");
+
+	OnStatusEffectAreaRequested.Broadcast(BlizzardTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Blizzard")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Blizzard"));
+	}
+
 }
 
 void UStatusComponent::AddBurn()
@@ -484,14 +512,41 @@ void UStatusComponent::RemoveCharge()
 	// Remove Charge logic here
 }
 
-void UStatusComponent::AddConductor()
+void UStatusComponent::AddConductor(AActor* ComboCauser)
 {
-	// Add Conductor logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag ConductorTag = FGameplayTag::RequestGameplayTag("Status.Conductor");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(ConductorTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(ConductorTimerHandle, this, &UStatusComponent::RemoveConductor, ConductorTimer, false);
 }
 
 void UStatusComponent::RemoveConductor()
 {
-	// Remove Conductor logic here
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag ConductorTag = FGameplayTag::RequestGameplayTag("Status.Conductor");
+
+	OnStatusEffectAreaRequested.Broadcast(ConductorTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Conductor")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Conductor"));
+	}
+
 }
 
 void UStatusComponent::AddCrystalize()
@@ -504,14 +559,39 @@ void UStatusComponent::RemoveCrystalize()
 	// Remove Crystalize logic here
 }
 
-void UStatusComponent::AddEarthquake()
+void UStatusComponent::AddEarthquake(AActor* ComboCauser)
 {
-	// Add Earthquake logic here
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag EarthquakeTag = FGameplayTag::RequestGameplayTag("Status.Earthquake");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(EarthquakeTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(EarthquakeTimerHandle, this, &UStatusComponent::RemoveEarthquake, EarthquakeTimer, false);
 }
 
 void UStatusComponent::RemoveEarthquake()
 {
-	// Remove Earthquake logic here
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag EarthquakeTag = FGameplayTag::RequestGameplayTag("Status.Earthquake");
+
+	OnStatusEffectAreaRequested.Broadcast(EarthquakeTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Earthquake")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Earthquake"));
+	}
+
 }
 
 void UStatusComponent::AddEmber(AActor* ComboCauser)
@@ -571,14 +651,41 @@ void UStatusComponent::RemoveEntomb()
 	// Remove Entomb logic here
 }
 
-void UStatusComponent::AddExplode()
+void UStatusComponent::AddExplode(AActor* ComboCauser)
 {
-	// Add Explode logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag ExplodeTag = FGameplayTag::RequestGameplayTag("Status.Explode");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(ExplodeTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(ExplodeTimerHandle, this, &UStatusComponent::RemoveExplode, ExplodeTimer, false);
 }
 
 void UStatusComponent::RemoveExplode()
 {
-	// Remove Explode logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag ExplodeTag = FGameplayTag::RequestGameplayTag("Status.Explode");
+
+	OnStatusEffectAreaRequested.Broadcast(ExplodeTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Explode")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Explode"));
+	}
 }
 
 void UStatusComponent::AddExtinguish()
@@ -611,24 +718,78 @@ void UStatusComponent::RemoveFreeze()
 	// Remove Freeze logic here
 }
 
-void UStatusComponent::AddHypercharge()
+void UStatusComponent::AddHypercharge(AActor* ComboCauser)
 {
-	// Add Hypercharge logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag HyperchargeTag = FGameplayTag::RequestGameplayTag("Status.Hypercharge");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(HyperchargeTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(HyperchargeTimerHandle, this, &UStatusComponent::RemoveHypercharge, HyperchargeTimer, false);
 }
 
 void UStatusComponent::RemoveHypercharge()
 {
-	// Remove Hypercharge logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag HyperchargeTag = FGameplayTag::RequestGameplayTag("Status.Hypercharge");
+
+	OnStatusEffectAreaRequested.Broadcast(HyperchargeTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Hypercharge")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Hypercharge"));
+	}
 }
 
-void UStatusComponent::AddLava()
+void UStatusComponent::AddLava(AActor* ComboCauser)
 {
-	// Add Lava logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag LavaTag = FGameplayTag::RequestGameplayTag("Status.Lava");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(LavaTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(LavaTimerHandle, this, &UStatusComponent::RemoveLava, LavaTimer, false);
 }
 
 void UStatusComponent::RemoveLava()
 {
-	// Remove Lava logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag LavaTag = FGameplayTag::RequestGameplayTag("Status.Lava");
+
+	OnStatusEffectAreaRequested.Broadcast(LavaTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Lava")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Lava"));
+	}
 }
 
 void UStatusComponent::AddMagma()
@@ -699,14 +860,41 @@ void UStatusComponent::RemoveShield()
 	}
 }
 
-void UStatusComponent::AddShockwave()
+void UStatusComponent::AddShockwave(AActor* ComboCauser)
 {
-	// Add Shockwave logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag ShockwaveTag = FGameplayTag::RequestGameplayTag("Status.Shockwave");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(ShockwaveTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(ShockwaveTimerHandle, this, &UStatusComponent::RemoveShockwave, ShockwaveTimer, false);
 }
 
 void UStatusComponent::RemoveShockwave()
 {
-	// Remove Shockwave logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag ShockwaveTag = FGameplayTag::RequestGameplayTag("Status.Shockwave");
+
+	OnStatusEffectAreaRequested.Broadcast(ShockwaveTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Shockwave")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Shockwave"));
+	}
 }
 
 void UStatusComponent::AddSinge()
@@ -738,14 +926,41 @@ void UStatusComponent::RemoveSlow()
 	}
 }
 
-void UStatusComponent::AddSmolder()
+void UStatusComponent::AddSmolder(AActor* ComboCauser)
 {
-	// Add Smolder logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag SmolderTag = FGameplayTag::RequestGameplayTag("Status.Smolder");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(SmolderTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(SmolderTimerHandle, this, &UStatusComponent::RemoveSmolder, SmolderTimer, false);
 }
 
 void UStatusComponent::RemoveSmolder()
 {
-	// Remove Smolder logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag SmolderTag = FGameplayTag::RequestGameplayTag("Status.Smolder");
+
+	OnStatusEffectAreaRequested.Broadcast(SmolderTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Smolder")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Smolder"));
+	}
 }
 
 void UStatusComponent::AddStagger()
@@ -758,14 +973,41 @@ void UStatusComponent::RemoveStagger()
 	// Remove Stagger logic here
 }
 
-void UStatusComponent::AddStorm()
+void UStatusComponent::AddStorm(AActor* ComboCauser)
 {
-	// Add Storm logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag StormTag = FGameplayTag::RequestGameplayTag("Status.Storm");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(StormTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(StormTimerHandle, this, &UStatusComponent::RemoveStorm, StormTimer, false);
 }
 
 void UStatusComponent::RemoveStorm()
 {
-	// Remove Storm logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag StormTag = FGameplayTag::RequestGameplayTag("Status.Storm");
+
+	OnStatusEffectAreaRequested.Broadcast(StormTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Storm")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Storm"));
+	}
 }
 
 void UStatusComponent::AddStun()
@@ -787,14 +1029,41 @@ void UStatusComponent::RemoveStun()
 	}
 }
 
-void UStatusComponent::AddSupercharge()
+void UStatusComponent::AddSupercharge(AActor* ComboCauser)
 {
-	// Add Supercharge logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+
+	const FGameplayTag SuperchargeTag = FGameplayTag::RequestGameplayTag("Status.Supercharge");
+	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
+	OnStatusEffectAreaRequested.Broadcast(SuperchargeTag, true, OwnerActor, ComboCauser, OwnerActor->GetActorLocation());
+	GetWorld()->GetTimerManager().SetTimer(SuperchargeTimerHandle, this, &UStatusComponent::RemoveSupercharge, SuperchargeTimer, false);
 }
 
 void UStatusComponent::RemoveSupercharge()
 {
-	// Remove Supercharge logic here
+
+	AActor* OwnerActor = GetOwner();
+	if (!IsValid(OwnerActor))
+	{
+		return;
+	}
+
+	const FGameplayTag SuperchargeTag = FGameplayTag::RequestGameplayTag("Status.Supercharge");
+
+	OnStatusEffectAreaRequested.Broadcast(SuperchargeTag, false, OwnerActor, nullptr, OwnerActor->GetActorLocation());
+
+	UTagManager* TagManager = GetOwner()->FindComponentByClass<UTagManager>();
+	if (TagManager && TagManager->GetGameplayTagContainer().HasTag(FGameplayTag::RequestGameplayTag("Status.Supercharge")))
+	{
+		TagManager->GameplayTagContainer.RemoveTag(FGameplayTag::RequestGameplayTag("Status.Supercharge"));
+	}
 }
 
 void UStatusComponent::AddSuperheat()

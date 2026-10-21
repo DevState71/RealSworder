@@ -178,10 +178,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Status")
 	FStatusEffectAreaRequested OnStatusEffectAreaRequested;
 
-	void AddBlizzard();
+	void AddBlizzard(AActor* ComboCauser);
 	void RemoveBlizzard();
 
+	UFUNCTION(BlueprintCallable, Category = "Status")
 	void AddBurn();
+
 	void RemoveBurn();
 	void BurnDamageTickFunction();
 
@@ -194,13 +196,13 @@ public:
 	void AddCharge();
 	void RemoveCharge();
 
-	void AddConductor();
+	void AddConductor(AActor* ComboCauser);
 	void RemoveConductor();
 
 	void AddCrystalize();
 	void RemoveCrystalize();
 
-	void AddEarthquake();
+	void AddEarthquake(AActor* ComboCauser);
 	void RemoveEarthquake();
 
 	void AddEmber(AActor* ComboCauser);
@@ -212,7 +214,7 @@ public:
 	void AddEntomb();
 	void RemoveEntomb();
 
-	void AddExplode();
+	void AddExplode(AActor* ComboCauser);
 	void RemoveExplode();
 
 	void AddExtinguish();
@@ -224,10 +226,10 @@ public:
 	void AddFreeze();
 	void RemoveFreeze();
 
-	void AddHypercharge();
+	void AddHypercharge(AActor* ComboCauser);
 	void RemoveHypercharge();
 
-	void AddLava();
+	void AddLava(AActor* ComboCauser);
 	void RemoveLava();
 
 	void AddMagma();
@@ -242,7 +244,7 @@ public:
 	void AddShield();
 	void RemoveShield();
 
-	void AddShockwave();
+	void AddShockwave(AActor* ComboCauser);
 	void RemoveShockwave();
 
 	void AddSinge();
@@ -251,19 +253,19 @@ public:
 	void AddSlow();
 	void RemoveSlow();
 
-	void AddSmolder();
+	void AddSmolder(AActor* ComboCauser);
 	void RemoveSmolder();
 
 	void AddStagger();
 	void RemoveStagger();
 
-	void AddStorm();
+	void AddStorm(AActor* ComboCauser);
 	void RemoveStorm();
 
 	void AddStun();
 	void RemoveStun();
 
-	void AddSupercharge();
+	void AddSupercharge(AActor* ComboCauser);
 	void RemoveSupercharge();
 
 	void AddSuperheat();
