@@ -5,7 +5,7 @@
 #include "Utility/Saveable.h"
 
 
-USworderSaveGame::USworderSaveGame()
+USworderSaveGame::USworderSaveGame() : PlayerGold(0)
 {
 }
 
@@ -16,7 +16,7 @@ void USworderSaveGame::SaveAllData(TArray<AActor*> Actors)
 		// Call Saveable interface function
 		ISaveable* Interface = Cast<ISaveable>(Actors[i]);
 		if (Interface) {
-			Interface->SaveData(this);
+			Interface->Execute_SaveData(Actors[i], this);
 		}
 	}
 }
@@ -25,6 +25,16 @@ void USworderSaveGame::LoadObjectData(AActor* Actor)
 {
 	ISaveable* Interface = Cast<ISaveable>(Actor);
 	if (Interface) {
-		Interface->LoadData(this);
+		Interface->Execute_LoadData(Actor, this);
 	}
+}
+
+int USworderSaveGame::GetPlayerGold()
+{
+	return PlayerGold;
+}
+
+void USworderSaveGame::SetPlayerGold(int Gold)
+{
+	PlayerGold = Gold;
 }

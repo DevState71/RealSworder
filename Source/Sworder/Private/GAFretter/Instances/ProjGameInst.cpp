@@ -136,20 +136,20 @@ void UProjGameInst::SaveGame(bool bAsync)
 	}
 
 	FAsyncSaveGameToSlotDelegate SaveDelegate;
-	SaveDelegate.BindUFunction(this, FName("SaveCompleted"));
+	SaveDelegate.BindUObject(this, &UProjGameInst::SaveCompleted);
 
 	if (bAsync) {
 		UGameplayStatics::AsyncSaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex, SaveDelegate);
 	}
 	else
 	{
-		UGameplayStatics::SaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex);
-		SaveCompleted(SaveSlotName, 0, true);
+		if (UGameplayStatics::SaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex))
+			SaveCompleted(SaveSlotName, 0, true);
 	}
 
 }
 
-void UProjGameInst::SaveCompleted(FString& SlotName, const int32 UserIndex, bool bSuccessful)
+void UProjGameInst::SaveCompleted(const FString& SlotName, const int32 UserIndex, bool bSuccessful)
 {
 	if (bSuccessful)
 		GameSaved.Broadcast();
@@ -187,12 +187,14 @@ void UProjGameInst::LoadActorsData(AActor* Actor)
 		SaveGameRef->LoadObjectData(Actor);
 }
 
-void UProjGameInst::LoadGame(bool bAsync)
+void UProjGameInst::LoadGame()
 {
 	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex)) {
 		USaveGame* save = UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex);
 		SaveGameRef = Cast<USworderSaveGame>(save);
 		GameLoaded.Broadcast();
 	}
+	else
+		UE_LOG(LogTemp, Error, TEXT("Error: Could not find an existing save game. - UProjGameInst::LoadGame"));
 }
 

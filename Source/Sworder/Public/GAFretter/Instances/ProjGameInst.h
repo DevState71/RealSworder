@@ -104,23 +104,30 @@ protected:
 	// -------- SAVE GAME VARIABLES AND FUNCTIONS --------
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class USworderSaveGame> SworderSaveGameClass;
+	UPROPERTY(BlueprintReadOnly)
 	class USworderSaveGame* SaveGameRef;
 	UPROPERTY(EditDefaultsOnly)
 	FString SaveSlotName;
 	int32 SaveUserIndex;
-	FSaveDispatch GameSaved;
-	FSaveDispatch GameLoaded;
 
 	
 	void SaveGame(bool bAsync);
-	void SaveCompleted(FString& SlotName, const int32 UserIndex, bool bSuccessful);
-	UFUNCTION(BlueprintCallable)
-	void RequestSave(bool bAsync);
-	UFUNCTION(BlueprintCallable)
-	void CreateSworderSaveGame();
-	void LoadActorsData(AActor* Actor);
+	void SaveCompleted(const FString& SlotName, const int32 UserIndex, bool bSuccessful);
+
+public:
+	FSaveDispatch GameSaved;
+	FSaveDispatch GameLoaded;
 
 	UFUNCTION(BlueprintCallable)
-	void LoadGame(bool bAsync);
+	void RequestSave(bool bAsync);
+
+	UFUNCTION(BlueprintCallable)
+	void CreateSworderSaveGame();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadGame();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadActorsData(AActor* Actor);
 
 };

@@ -23,6 +23,11 @@ class SWORDER_API ISaveable
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
-	virtual void SaveData(class USaveGame* SaveGameRef) = 0;
-	virtual void LoadData(class USaveGame* SaveGameRef) = 0;
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void SaveData(class USworderSaveGame* SaveGameRef);
+	virtual void SaveData_Implementation(class USworderSaveGame* SaveGameRef) = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void LoadData(class USworderSaveGame* SaveGameRef);
+	virtual void LoadData_Implementation(class USworderSaveGame* SaveGameRef) = 0;
 };

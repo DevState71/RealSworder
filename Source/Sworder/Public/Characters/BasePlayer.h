@@ -7,13 +7,14 @@
 #include "Weapons/BaseWeapon.h"
 #include "Components/StatusComponent.h"
 #include "Components/TagManager.h"
+#include "Utility/Saveable.h"
 #include "BasePlayer.generated.h"
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEventDispatch);
 
 UCLASS()
-class SWORDER_API ABasePlayer : public ACharacter
+class SWORDER_API ABasePlayer : public ACharacter, public ISaveable
 {
 	GENERATED_BODY()
 
@@ -130,5 +131,8 @@ protected:
 	UFUNCTION(BLueprintImplementableEvent, Blueprintcallable)
 	void Attack();
 
+	// ----------------------------------------------------------------------------------- Inputs End -----------------------------------------------------------------------------------
 
+	void SaveData_Implementation(class USworderSaveGame* SaveGameRef) override;
+	void LoadData_Implementation(class USworderSaveGame* SaveGameRef) override;
 };

@@ -19,4 +19,14 @@ public:
 
 	void SaveAllData(TArray<AActor*> Actors);
 	void LoadObjectData(AActor* Actor);
+
+protected:
+	UPROPERTY()
+	int PlayerGold;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	int GetPlayerGold();
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerGold(int Gold);
 };

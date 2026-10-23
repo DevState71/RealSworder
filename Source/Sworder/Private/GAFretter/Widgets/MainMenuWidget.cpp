@@ -12,6 +12,7 @@ void UMainMenuWidget::NativePreConstruct()
 
 	if (MenuMusic) PlaySound(MenuMusic);
 
+	if (ContinueButton) ContinueButton->SetButtonText(FText::FromString("Continue"));
 	if (PlayButton) PlayButton->SetButtonText(FText::FromString("Play"));
 	if (QuitButton) QuitButton->SetButtonText(FText::FromString("Quit"));
 	if (OptionsButton) OptionsButton->SetButtonText(FText::FromString("Options"));
@@ -22,13 +23,28 @@ void UMainMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Bind the Play Button and Quit Button to our Game Instance transition logic
+	if (ContinueButton) ContinueButton->OnButtonClicked.AddDynamic(this, &UMainMenuWidget::OnContinueClicked);
 	if (PlayButton) PlayButton->OnButtonClicked.AddDynamic(this, &UMainMenuWidget::OnPlayClicked);
 	if (QuitButton) QuitButton->OnButtonClicked.AddDynamic(this, &UMainMenuWidget::OnQuitClicked);
 	if (OptionsButton) OptionsButton->OnButtonClicked.AddDynamic(this, &UMainMenuWidget::OnOptionsClicked);
 }
 
-	// Get our custom Game Instance to load the first level
-void UMainMenuWidget::OnPlayClicked() { if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) GameInst->LoadFirstLevel(); }
+void UMainMenuWidget::OnContinueClicked()
+{
+	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
+		GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
+		GameInst->LoadGame();
+	}
+}
+
+// Get our custom Game Instance to load the first level
+void UMainMenuWidget::OnPlayClicked() 
+{ 
+	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
+		GameInst->CreateSworderSaveGame();
+		GameInst->LoadFirstLevel();
+	}
+}
 
 void UMainMenuWidget::OnQuitClicked() { if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) GameInst->QuitTheGame(); }
 

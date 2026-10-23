@@ -17,6 +17,8 @@
 #include "Animations/PlayerAnimInstance.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Utility/SworderSaveGame.h"
+
 
 
 // Sets default values
@@ -238,6 +240,14 @@ void ABasePlayer::InputAttack(const FInputActionValue& Value)
 			
 		}
 	}
+}
+
+void ABasePlayer::SaveData_Implementation(USworderSaveGame* SaveGameRef)
+{
+}
+
+void ABasePlayer::LoadData_Implementation(USworderSaveGame* SaveGameRef)
+{
 }
 
 void ABasePlayer::UpdateAttackAnimation()

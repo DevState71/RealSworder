@@ -27,6 +27,9 @@ protected:
 
 	// These variables MUST exactly match the names of your buttons in the UMG Blueprint
 	UPROPERTY(meta = (BindWidget))
+	UButtonWithText* ContinueButton;
+
+	UPROPERTY(meta = (BindWidget))
 	UButtonWithText* PlayButton;
 
 	UPROPERTY(meta = (BindWidget))
@@ -48,6 +51,9 @@ protected:
 
 private:
 	// The functions that run when the buttons are clicked
+	UFUNCTION()
+	void OnContinueClicked();
+
 	UFUNCTION()
 	void OnPlayClicked();
 
