@@ -26,6 +26,9 @@ struct FDeviceIconSet
 
 };
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSaveDispatch);
+
 /**
  * 
  */
@@ -35,6 +38,8 @@ class SWORDER_API UProjGameInst : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	UProjGameInst();
+
 	virtual void Init() override;
 
 	// Core transition functions
@@ -94,4 +99,28 @@ protected:
 	// Current active set of icons loaded in memory
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI|Input Icons")
 	FDeviceIconSet ActiveIconSet;
+
+
+	// -------- SAVE GAME VARIABLES AND FUNCTIONS --------
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class USworderSaveGame> SworderSaveGameClass;
+	class USworderSaveGame* SaveGameRef;
+	UPROPERTY(EditDefaultsOnly)
+	FString SaveSlotName;
+	int32 SaveUserIndex;
+	FSaveDispatch GameSaved;
+	FSaveDispatch GameLoaded;
+
+	
+	void SaveGame(bool bAsync);
+	void SaveCompleted(FString& SlotName, const int32 UserIndex, bool bSuccessful);
+	UFUNCTION(BlueprintCallable)
+	void RequestSave(bool bAsync);
+	UFUNCTION(BlueprintCallable)
+	void CreateSworderSaveGame();
+	void LoadActorsData(AActor* Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void LoadGame(bool bAsync);
+
 };

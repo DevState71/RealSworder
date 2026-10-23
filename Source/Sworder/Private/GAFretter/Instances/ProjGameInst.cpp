@@ -10,6 +10,16 @@
 #include "GAFretter/Settings/SworderGameUserSettings.h"
 #include "GameFramework/PlayerController.h"
 
+#include "Utility/SworderSaveGame.h"
+#include "Kismet/GameplayStatics.h"
+#include "EngineUtils.h"
+#include "Utility/Saveable.h"
+
+
+UProjGameInst::UProjGameInst() : SaveSlotName("SaveSlot_1"), SaveUserIndex(0)
+{
+}
+
 void UProjGameInst::Init()
 {
 	Super::Init();
@@ -117,3 +127,72 @@ void UProjGameInst::QuitTheGame()
 		}
 	}
 }
+
+void UProjGameInst::SaveGame(bool bAsync)
+{
+	if (!SaveGameRef) {
+		UE_LOG(LogTemp, Error, TEXT("Error: SaveGameRef variable was not valid - UProjGameInst::SaveGame"));
+		return;
+	}
+
+	FAsyncSaveGameToSlotDelegate SaveDelegate;
+	SaveDelegate.BindUFunction(this, FName("SaveCompleted"));
+
+	if (bAsync) {
+		UGameplayStatics::AsyncSaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex, SaveDelegate);
+	}
+	else
+	{
+		UGameplayStatics::SaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex);
+		SaveCompleted(SaveSlotName, 0, true);
+	}
+
+}
+
+void UProjGameInst::SaveCompleted(FString& SlotName, const int32 UserIndex, bool bSuccessful)
+{
+	if (bSuccessful)
+		GameSaved.Broadcast();
+}
+
+void UProjGameInst::RequestSave(bool bAsync)
+{
+	TArray<AActor*> OutActors;
+
+	for (FActorIterator It(GetWorld()); It; ++It)
+	{
+		AActor* Actor = *It;
+		if (Actor->GetClass()->ImplementsInterface(USaveable::StaticClass()))
+		{
+			OutActors.Add(Actor);
+		}
+	}
+	
+	SaveGameRef->SaveAllData(OutActors);
+
+	SaveGame(bAsync);
+}
+
+void UProjGameInst::CreateSworderSaveGame()
+{
+	if (SworderSaveGameClass) {
+		SaveGameRef = Cast<USworderSaveGame>(UGameplayStatics::CreateSaveGameObject(SworderSaveGameClass));
+	}
+
+}
+
+void UProjGameInst::LoadActorsData(AActor* Actor)
+{
+	if (SaveGameRef)
+		SaveGameRef->LoadObjectData(Actor);
+}
+
+void UProjGameInst::LoadGame(bool bAsync)
+{
+	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex)) {
+		USaveGame* save = UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex);
+		SaveGameRef = Cast<USworderSaveGame>(save);
+		GameLoaded.Broadcast();
+	}
+}
+
