@@ -10,6 +10,8 @@ class USplineComponent;
 class UNiagaraSystem;
 class UBoxComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTrapPlateEnemyDefeatedSignature);
+
 UENUM(BlueprintType)
 enum class EFormationShape : uint8
 {
@@ -96,6 +98,24 @@ public:
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
+	// =========================================================================
+	// NEW ROOM MANAGER INTEGRATIONS
+	// =========================================================================
+
+	// Delegate broadcasted every time an enemy spawned by this plate is defeated
+	UPROPERTY(BlueprintAssignable, Category = "Spawning|Events")
+	FOnTrapPlateEnemyDefeatedSignature OnTrapPlateEnemyDefeated;
+
+	// Calculates the total enemy count across all waves in this plate
+	UFUNCTION(BlueprintCallable, Category = "Spawning|State")
+	int32 GetTotalEnemiesToSpawn() const;
+
+	// Manually kicks off the wave spawning (called by the Room State Manager)
+	UFUNCTION(BlueprintCallable, Category = "Spawning|State")
+	void ActivateTrapPlate();
+
+	// =========================================================================
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -132,6 +152,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UBoxComponent* TriggerZone;
+
+	// If true, the Trap Plate's native overlap box is ignored and it waits for the Room Manager to activate it
+	UPROPERTY(EditAnywhere, Category = "Spawning|State")
+	bool bManagedByRoomDirector = false;
 
 	// The center point of the formation relative to the trap plate. 
 	// MakeEditWidget creates a draggable 3D diamond in the editor viewport!

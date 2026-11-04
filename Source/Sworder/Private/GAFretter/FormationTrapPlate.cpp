@@ -193,14 +193,16 @@ void AFormationTrapPlate::Tick(float DeltaTime)
 
 void AFormationTrapPlate::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    // Ensure we have a valid actor, a valid class to spawn, and at least 1 enemy requested
+    // If a Room State Manager controls this plate, ignore this overlap box entirely
+    if (bManagedByRoomDirector)
+    {
+        return;
+    }
+
+    // Otherwise, function as a standalone trap plate
     if (OtherActor && OtherActor != this && Waves.Num() > 0)
     {
-        // Disable the trigger so it only fires once per level
-        TriggerZone->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        CurrentWaveIndex = 0; // Start at the first wave
-
-        StartNextWave();
+        ActivateTrapPlate();
     }
 }
 
@@ -554,3 +556,30 @@ void AFormationTrapPlate::EnforceShapeRules()
     if (PreviewWaveIndex >= Waves.Num()) { PreviewWaveIndex = Waves.Num() - 1; }
 }
 #endif
+
+int32 AFormationTrapPlate::GetTotalEnemiesToSpawn() const
+{
+    int32 TotalEnemies = 0;
+
+    for (const FFormationWave& Wave : Waves)
+    {
+        TotalEnemies += Wave.EnemyCount;
+    }
+
+    return TotalEnemies;
+}
+
+void AFormationTrapPlate::ActivateTrapPlate()
+{
+    // Disable the trigger so it doesn't accidentally fire again
+    TriggerZone->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    // Reset indices and kick off the spawning sequence
+    CurrentWaveIndex = 0;
+    CurrentSpawnIndex = 0;
+
+    if (Waves.Num() > 0)
+    {
+        StartNextWave();
+    }
+}
