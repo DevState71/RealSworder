@@ -43,6 +43,9 @@ protected:
 
 	TArray<AActor*> HitActors;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AOE")
+	float LifeSpan = 5.0f; // Default lifespan of the AOE actor
+
 
 public:	
 	// Called every frame
