@@ -567,6 +567,15 @@ void UStatusComponent::AddEarthquake(AActor* ComboCauser)
 		return;
 	}
 
+	UStatusComponent* StatusComponent = ComboCauser->FindComponentByClass<UStatusComponent>();
+
+	if (StatusComponent)
+	{
+		StatusComponent->AddShield();
+	}
+
+	this->AddShockwave(ComboCauser);
+
 	const FGameplayTag EarthquakeTag = FGameplayTag::RequestGameplayTag("Status.Earthquake");
 	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
 	UE_LOG(LogTemp, Warning, TEXT("OwnerActor: %s"), *OwnerActor->GetName());
@@ -727,6 +736,11 @@ void UStatusComponent::AddHypercharge(AActor* ComboCauser)
 		return;
 	}
 
+	if(ComboCauser != OwnerActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hypercharge not cast on Self!"));
+		return;
+	}
 
 	const FGameplayTag HyperchargeTag = FGameplayTag::RequestGameplayTag("Status.Hypercharge");
 	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());
@@ -935,6 +949,7 @@ void UStatusComponent::AddSmolder(AActor* ComboCauser)
 		return;
 	}
 
+	this->AddShockwave(ComboCauser);
 
 	const FGameplayTag SmolderTag = FGameplayTag::RequestGameplayTag("Status.Smolder");
 	UE_LOG(LogTemp, Warning, TEXT("ComboCauser: %s"), *ComboCauser->GetName());

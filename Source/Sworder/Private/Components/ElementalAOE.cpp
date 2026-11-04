@@ -3,6 +3,8 @@
 
 #include "Components/ElementalAOE.h"
 #include "Components/SphereComponent.h"
+#include "Components/HealthComponent.h"
+#include "Components/StatusComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -123,7 +125,10 @@ void AElementalAOE::ProcessOverlap(AActor* OtherActor, FGameplayTag InStatusToAp
 		}
 	}
 
-	if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Ember"))
+	if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Explode") || 
+		InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Hypercharge") || 
+		InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Overcharge") ||
+		InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Storm"))
 	{
 		UHealthComponent* HealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
 
@@ -132,5 +137,75 @@ void AElementalAOE::ProcessOverlap(AActor* OtherActor, FGameplayTag InStatusToAp
 			HealthComp->TakeFlatDamage(Damage, EffectSource);
 		}
 	}
+	else if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Ember"))
+	{
+		UStatusComponent* StatusComp = OtherActor->FindComponentByClass<UStatusComponent>();
+
+		if (StatusComp) { StatusComp->AddBurn(); }
+	
+
+	}
+	else if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Blizzard"))
+	{
+		UStatusComponent* StatusComp = OtherActor->FindComponentByClass<UStatusComponent>();
+		UHealthComponent* HealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
+
+		if (HealthComp)
+		{
+			HealthComp->TakeFlatDamage(Damage, EffectSource);
+		}
+		if (StatusComp)
+		{
+			StatusComp->AddSlow();
+		}
+
+
+	}
+	else if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Earthquake"))
+	{
+		UStatusComponent* StatusComp = OtherActor->FindComponentByClass<UStatusComponent>();
+		UHealthComponent* HealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
+		UStatusComponent* StatusComponent = ComboSource->FindComponentByClass<UStatusComponent>();
+
+		
+		if (HealthComp)
+		{
+			HealthComp->TakeFlatDamage(Damage, EffectSource);
+		}
+		
+
+
+	}
+	else if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Lava"))
+	{
+		UStatusComponent* StatusComp = OtherActor->FindComponentByClass<UStatusComponent>();
+	
+		if (StatusComp)
+		{
+			StatusComp->AddSlow();
+			StatusComp->AddBurn();
+		}
+
+
+	}
+	else if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Smolder"))
+	{
+		UStatusComponent* StatusComp = OtherActor->FindComponentByClass<UStatusComponent>();
+		UHealthComponent* HealthComp = OtherActor->FindComponentByClass<UHealthComponent>();
+
+		if (HealthComp)
+		{
+			HealthComp->TakeFlatDamage(Damage, EffectSource);
+		}
+		
+
+
+	}
+	else if (InStatusToApply == FGameplayTag::RequestGameplayTag("Status.Shockwave"))
+	{
+
+	}
+
+
 }
 
