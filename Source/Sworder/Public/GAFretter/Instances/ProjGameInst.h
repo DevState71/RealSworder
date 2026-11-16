@@ -107,11 +107,15 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	class USworderSaveGame* SaveGameRef;
 	UPROPERTY(EditDefaultsOnly)
-	FString SaveSlotName;
+	FString SaveSlotName_1;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString SaveSlotName_2;
+
 	int32 SaveUserIndex;
 
 	
-	void SaveGame(bool bAsync);
+	void SaveGame(bool bAsync, const FString SlotName);
 	void SaveCompleted(const FString& SlotName, const int32 UserIndex, bool bSuccessful);
 
 public:
@@ -125,9 +129,12 @@ public:
 	void CreateSworderSaveGame();
 
 	UFUNCTION(BlueprintCallable)
-	void LoadGame();
+	void LoadGame(const FString SlotName);
 
 	UFUNCTION(BlueprintCallable)
 	void LoadActorsData(AActor* Actor);
+
+	// Used to return save information for the Save Select Menu
+	int LoadSaveFileInfo(FString SaveSlotName);
 
 };

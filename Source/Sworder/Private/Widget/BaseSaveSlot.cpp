@@ -1,0 +1,33 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Widget/BaseSaveSlot.h"
+
+#include "Components/TextBlock.h"
+
+void UBaseSaveSlot::NativePreConstruct()
+{
+
+}
+
+void UBaseSaveSlot::NativeConstruct()
+{
+}
+
+void UBaseSaveSlot::SetSaveSlotName(const FText NewSaveSlotName)
+{
+	if (SaveSlotNameText)
+		SaveSlotNameText->SetText(NewSaveSlotName);
+}
+
+void UBaseSaveSlot::SetSaveDataName(const FText NewDataName)
+{
+	if (SaveData_Name)
+		SaveData_Name->SetText(NewDataName);
+}
+
+void UBaseSaveSlot::SetSaveDataValue(const FText NewValue)
+{
+	if (SaveData_Value)
+		SaveData_Value->SetText(NewValue);
+}

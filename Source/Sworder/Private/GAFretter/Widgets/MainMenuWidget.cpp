@@ -33,7 +33,7 @@ void UMainMenuWidget::OnContinueClicked()
 {
 	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
 		GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
-		GameInst->LoadGame();
+		GameInst->LoadGame("SaveSlot_1");													// Update hard coded Save Slot Name
 	}
 }
 
