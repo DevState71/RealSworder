@@ -49,6 +49,12 @@ protected:
 	UFUNCTION()
 	void OnOptionsClicked();
 
+
+	// ---------------------------- Save Slot Widget ----------------------------
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> SaveSlotMenuClass;
+
+
 private:
 	// The functions that run when the buttons are clicked
 	UFUNCTION()

@@ -31,9 +31,16 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::OnContinueClicked()
 {
-	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-		GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
-		GameInst->LoadGame("SaveSlot_1");													// Update hard coded Save Slot Name
+	//if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
+	//	GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
+	//	GameInst->LoadGame("SaveSlot_1");													// Update hard coded Save Slot Name
+	//}
+
+	if (SaveSlotMenuClass) {
+		UUserWidget* SaveSelectMenu = CreateWidget<UUserWidget>(GetOwningPlayer(), SaveSlotMenuClass);
+		if (SaveSelectMenu) {
+			SaveSelectMenu->AddToViewport(101);
+		}
 	}
 }
 

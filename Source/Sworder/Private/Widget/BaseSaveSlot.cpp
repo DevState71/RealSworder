@@ -4,6 +4,7 @@
 #include "Widget/BaseSaveSlot.h"
 
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 
 void UBaseSaveSlot::NativePreConstruct()
 {
@@ -12,6 +13,13 @@ void UBaseSaveSlot::NativePreConstruct()
 
 void UBaseSaveSlot::NativeConstruct()
 {
+	if (SaveSlotButton)
+		SaveSlotButton->OnClicked.AddUniqueDynamic(this, &UBaseSaveSlot::HandleSaveButtonClick);
+}
+
+void UBaseSaveSlot::HandleSaveButtonClick()
+{
+	SaveSlotButtonClicked.Broadcast();
 }
 
 void UBaseSaveSlot::SetSaveSlotName(const FText NewSaveSlotName)

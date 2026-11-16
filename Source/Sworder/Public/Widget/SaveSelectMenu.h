@@ -25,5 +25,14 @@ protected:
 	class UBaseSaveSlot* SaveSlot_2;
 
 
-	void GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString SaveSlotName);
+	bool GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString SaveSlotName);
+
+	UFUNCTION()
+	void OnSaveSlot_1Clicked();
+
+	UFUNCTION()
+	void OnSaveSlot_2Clicked();
+
+
+	virtual void HandleSaveSlotClicked(FString SaveSlotName);
 };

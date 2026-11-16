@@ -135,6 +135,6 @@ public:
 	void LoadActorsData(AActor* Actor);
 
 	// Used to return save information for the Save Select Menu
-	int LoadSaveFileInfo(FString SaveSlotName);
+	bool LoadSaveFileInfo(FString SaveSlotName, int& SaveDataValue);
 
 };

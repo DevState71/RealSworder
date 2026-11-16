@@ -198,14 +198,15 @@ void UProjGameInst::LoadGame(const FString SlotName)
 		UE_LOG(LogTemp, Error, TEXT("Error: Could not find an existing save game. - UProjGameInst::LoadGame"));
 }
 
-int UProjGameInst::LoadSaveFileInfo(FString SaveSlotName)
+bool UProjGameInst::LoadSaveFileInfo(FString SaveSlotName, int& SaveDataValue)
 {
 	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex)) {
 		USworderSaveGame* save = Cast<USworderSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex));
 		if (save) {
-			return save->GetPlayerGold();
+			SaveDataValue = save->GetPlayerGold();
+			return true;
 		}
 	}
 	
-	return -1;
+	return false;
 }

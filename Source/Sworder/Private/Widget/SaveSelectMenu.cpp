@@ -28,20 +28,56 @@ void USaveSelectMenu::NativeConstruct()
 	if (SaveSlot_1)
 	{
 		// Check for an existing save and set the value. If none exist set name to "New Save" and Data to be empty.
-		GetSaveFileInfo(SaveSlot_1, "SaveSlot_1");
+		if (GetSaveFileInfo(SaveSlot_1, "SaveSlot_1")) {
+			// Should only be called if save file found
+			SaveSlot_1->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_1Clicked);
+		}
 	}
 
 	if (SaveSlot_2)
 	{
 		// Check for an existing save and set the value. If none exist set name to "New Save" and Data to be empty.
+		if (GetSaveFileInfo(SaveSlot_2, "SaveSlot_2"))
+		{
+			SaveSlot_2->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_2Clicked);
+		}
 	}
 }
 
-void USaveSelectMenu::GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString SaveSlotName)
+bool USaveSelectMenu::GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString SaveSlotName)
 {
 	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-		SaveSlot->SetSaveDataValue(FText::AsNumber(GameInst->LoadSaveFileInfo("SaveSlot_1")));
 
+		int SaveData = 0;
+		if (GameInst->LoadSaveFileInfo(SaveSlotName, SaveData)) {
+			SaveSlot->SetSaveDataValue(FText::AsNumber(SaveData));
+			return true;
+		}
+		else {
+			SaveSlot->SetSaveSlotName(FText::FromString("Empty"));
+			SaveSlot->SetSaveDataName(FText::FromString(""));
+			SaveSlot->SetSaveDataValue(FText::FromString(""));
+		}
+	}
+
+	return false;
+}
+
+void USaveSelectMenu::OnSaveSlot_1Clicked()
+{
+	HandleSaveSlotClicked("SaveSlot_1");
+}
+
+void USaveSelectMenu::OnSaveSlot_2Clicked()
+{
+	HandleSaveSlotClicked("SaveSlot_2");
+}
+
+void USaveSelectMenu::HandleSaveSlotClicked(FString SaveSlotName)
+{
+	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
+		GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
+		GameInst->LoadGame(SaveSlotName);
 	}
 }
 

@@ -9,6 +9,10 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSaveButtonDelegate);
+
+
 UCLASS()
 class SWORDER_API UBaseSaveSlot : public UUserWidget
 {
@@ -31,7 +35,12 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* SaveData_Value;
 
+	UFUNCTION()
+	void HandleSaveButtonClick();
+
 public:
+	FSaveButtonDelegate SaveSlotButtonClicked;
+
 	void SetSaveSlotName(const FText NewSaveSlotName);
 	void SetSaveDataName(const FText NewDataName);
 	void SetSaveDataValue(const FText NewValue);
