@@ -3,7 +3,23 @@
 
 #include "Widget/NewGameSaveSelectMenu.h"
 
+#include "Widget/BaseSaveSlot.h"
 #include "GAFretter/Instances/ProjGameInst.h"
+
+
+
+void UNewGameSaveSelectMenu::NativeConstruct()
+{
+	if (SaveSlot_1)
+	{
+		SetUpSaveSlot(SaveSlot_1);
+	}
+
+	if (SaveSlot_2)
+	{
+		SetUpSaveSlot(SaveSlot_2);
+	}
+}
 
 void UNewGameSaveSelectMenu::HandleSaveSlotClicked(FString SaveSlotName)
 {
@@ -13,4 +29,10 @@ void UNewGameSaveSelectMenu::HandleSaveSlotClicked(FString SaveSlotName)
 		GameInst->NewSave(SaveSlotName);
 	}
 
+}
+
+void UNewGameSaveSelectMenu::SetUpSaveSlot(UBaseSaveSlot* SaveSlot)
+{
+	GetSaveFileInfo(SaveSlot, SaveSlot->GetSaveSlotName());
+	SaveSlot->SaveSlotButtonClicked.AddUniqueDynamic(this, &UNewGameSaveSelectMenu::HandleSaveSlotClicked);
 }

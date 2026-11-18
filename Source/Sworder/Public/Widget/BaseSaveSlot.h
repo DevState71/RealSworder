@@ -10,7 +10,7 @@
  * 
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSaveButtonDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSaveButtonDelegate, FString, SaveSlotName);
 
 
 UCLASS()
@@ -28,6 +28,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* SaveSlotNameText;
+	FString SaveSlotName;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* SaveData_Name;
@@ -41,7 +42,10 @@ protected:
 public:
 	FSaveButtonDelegate SaveSlotButtonClicked;
 
-	void SetSaveSlotName(const FText NewSaveSlotName);
+	void SetSaveSlotNameText(const FText NewSaveSlotName);
+	void SetSaveSlotName(const FString NewSaveSlotName);
 	void SetSaveDataName(const FText NewDataName);
 	void SetSaveDataValue(const FText NewValue);
+	void SetButtonIsEnabled(bool IsEnabled);
+	FString GetSaveSlotName();
 };

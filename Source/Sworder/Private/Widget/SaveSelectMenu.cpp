@@ -11,13 +11,15 @@
 void USaveSelectMenu::NativePreConstruct()
 {
 	if (SaveSlot_1) {
-		SaveSlot_1->SetSaveSlotName(FText::FromString("Save Slot 1"));
+		SaveSlot_1->SetSaveSlotNameText(FText::FromString("Save Slot 1"));
+		SaveSlot_1->SetSaveSlotName("Save Slot 1");
 		SaveSlot_1->SetSaveDataName(FText::FromString("Gold: "));
 		SaveSlot_1->SetSaveDataValue(FText::FromString("0000"));
 	}
 
 	if (SaveSlot_2) {
-		SaveSlot_2->SetSaveSlotName(FText::FromString("Save Slot 2"));
+		SaveSlot_2->SetSaveSlotNameText(FText::FromString("Save Slot 2"));
+		SaveSlot_2->SetSaveSlotName("Save Slot 2");
 		SaveSlot_2->SetSaveDataName(FText::FromString("Gold: "));
 		SaveSlot_2->SetSaveDataValue(FText::FromString("0000"));
 	}
@@ -25,17 +27,12 @@ void USaveSelectMenu::NativePreConstruct()
 
 void USaveSelectMenu::NativeConstruct()
 {
-	if (SaveSlot_1)
-	{
-		GetSaveFileInfo(SaveSlot_1, "SaveSlot_1");
-		SaveSlot_1->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_1Clicked);
-	}
 
-	if (SaveSlot_2)
-	{
-		GetSaveFileInfo(SaveSlot_2, "SaveSlot_2");
-		SaveSlot_2->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_2Clicked);
-	}
+}
+
+void USaveSelectMenu::SetUpSaveSlot(class UBaseSaveSlot* SaveSlot)
+{
+	// Defined in child classes
 }
 
 bool USaveSelectMenu::GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString SaveSlotName)
@@ -48,7 +45,7 @@ bool USaveSelectMenu::GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString Sav
 			return true;
 		}
 		else {
-			SaveSlot->SetSaveSlotName(FText::FromString("Empty"));
+			SaveSlot->SetSaveSlotNameText(FText::FromString("Empty"));
 			SaveSlot->SetSaveDataName(FText::FromString(""));
 			SaveSlot->SetSaveDataValue(FText::FromString(""));
 		}
@@ -57,21 +54,8 @@ bool USaveSelectMenu::GetSaveFileInfo(class UBaseSaveSlot* SaveSlot, FString Sav
 	return false;
 }
 
-void USaveSelectMenu::OnSaveSlot_1Clicked()
-{
-	HandleSaveSlotClicked("SaveSlot_1");
-}
-
-void USaveSelectMenu::OnSaveSlot_2Clicked()
-{
-	HandleSaveSlotClicked("SaveSlot_2");
-}
-
 void USaveSelectMenu::HandleSaveSlotClicked(FString SaveSlotName)
 {
-	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-		GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
-		GameInst->LoadGame(SaveSlotName);
-	}
+	// Defined in child classes
 }
 

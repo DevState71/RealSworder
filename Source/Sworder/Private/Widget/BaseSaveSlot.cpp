@@ -19,13 +19,19 @@ void UBaseSaveSlot::NativeConstruct()
 
 void UBaseSaveSlot::HandleSaveButtonClick()
 {
-	SaveSlotButtonClicked.Broadcast();
+	SaveSlotButtonClicked.Broadcast(SaveSlotName);
 }
 
-void UBaseSaveSlot::SetSaveSlotName(const FText NewSaveSlotName)
+void UBaseSaveSlot::SetSaveSlotNameText(const FText NewSaveSlotName)
 {
-	if (SaveSlotNameText)
+	if (SaveSlotNameText) {
 		SaveSlotNameText->SetText(NewSaveSlotName);
+	}
+}
+
+void UBaseSaveSlot::SetSaveSlotName(const FString NewSaveSlotName)
+{
+	SaveSlotName = NewSaveSlotName;
 }
 
 void UBaseSaveSlot::SetSaveDataName(const FText NewDataName)
@@ -38,4 +44,14 @@ void UBaseSaveSlot::SetSaveDataValue(const FText NewValue)
 {
 	if (SaveData_Value)
 		SaveData_Value->SetText(NewValue);
+}
+
+void UBaseSaveSlot::SetButtonIsEnabled(bool IsEnabled)
+{
+	SaveSlotButton->SetIsEnabled(IsEnabled);
+}
+
+FString UBaseSaveSlot::GetSaveSlotName()
+{
+	return SaveSlotName;
 }

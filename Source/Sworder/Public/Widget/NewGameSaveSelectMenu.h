@@ -16,5 +16,9 @@ class SWORDER_API UNewGameSaveSelectMenu : public USaveSelectMenu
 	
 
 protected:
+	virtual void NativeConstruct() override;
+
 	virtual void HandleSaveSlotClicked(FString SaveSlotName) override;
+
+	virtual void SetUpSaveSlot(class UBaseSaveSlot* SaveSlot) override;
 };
