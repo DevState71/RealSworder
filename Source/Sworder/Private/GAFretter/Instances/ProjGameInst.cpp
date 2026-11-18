@@ -16,7 +16,7 @@
 #include "Utility/Saveable.h"
 
 
-UProjGameInst::UProjGameInst() : SaveSlotName_1("SaveSlot_1"), SaveSlotName_2("SaveSlot_2"), SaveUserIndex(0)
+UProjGameInst::UProjGameInst() : SaveSlotName("DefaultSaveSlotName"), SaveUserIndex(0)
 {
 }
 
@@ -128,7 +128,7 @@ void UProjGameInst::QuitTheGame()
 	}
 }
 
-void UProjGameInst::SaveGame(bool bAsync, const FString SlotName)
+void UProjGameInst::SaveGame(bool bAsync)
 {
 	if (!SaveGameRef) {
 		UE_LOG(LogTemp, Error, TEXT("Error: SaveGameRef variable was not valid - UProjGameInst::SaveGame"));
@@ -139,12 +139,12 @@ void UProjGameInst::SaveGame(bool bAsync, const FString SlotName)
 	SaveDelegate.BindUObject(this, &UProjGameInst::SaveCompleted);
 
 	if (bAsync) {
-		UGameplayStatics::AsyncSaveGameToSlot(SaveGameRef, SlotName, SaveUserIndex, SaveDelegate);
+		UGameplayStatics::AsyncSaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex, SaveDelegate);
 	}
 	else
 	{
-		if (UGameplayStatics::SaveGameToSlot(SaveGameRef, SlotName, SaveUserIndex))
-			SaveCompleted(SlotName, 0, true);
+		if (UGameplayStatics::SaveGameToSlot(SaveGameRef, SaveSlotName, SaveUserIndex))
+			SaveCompleted(SaveSlotName, 0, true);
 	}
 
 }
@@ -153,6 +153,20 @@ void UProjGameInst::SaveCompleted(const FString& SlotName, const int32 UserIndex
 {
 	if (bSuccessful)
 		GameSaved.Broadcast();
+}
+
+bool UProjGameInst::FindAndSetSaveFile(const FString SlotName)
+{
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, SaveUserIndex)) {
+		USaveGame* save = UGameplayStatics::LoadGameFromSlot(SlotName, SaveUserIndex);
+		SaveSlotName = SlotName;
+		SaveGameRef = Cast<USworderSaveGame>(save);
+		return true;
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Error: Could not find an existing save game. - UProjGameInst::LoadGame"));
+		return false;
+	}
 }
 
 void UProjGameInst::RequestSave(bool bAsync)
@@ -170,13 +184,14 @@ void UProjGameInst::RequestSave(bool bAsync)
 	
 	SaveGameRef->SaveAllData(OutActors);
 
-	SaveGame(bAsync, SaveSlotName_1);
+	SaveGame(bAsync);
 }
 
-void UProjGameInst::CreateSworderSaveGame()
+void UProjGameInst::CreateSworderSaveGame(const FString SlotName)
 {
 	if (SworderSaveGameClass) {
 		SaveGameRef = Cast<USworderSaveGame>(UGameplayStatics::CreateSaveGameObject(SworderSaveGameClass));
+		SaveSlotName = SlotName;
 	}
 
 }
@@ -189,19 +204,15 @@ void UProjGameInst::LoadActorsData(AActor* Actor)
 
 void UProjGameInst::LoadGame(const FString SlotName)
 {
-	if (UGameplayStatics::DoesSaveGameExist(SlotName, SaveUserIndex)) {
-		USaveGame* save = UGameplayStatics::LoadGameFromSlot(SlotName, SaveUserIndex);
-		SaveGameRef = Cast<USworderSaveGame>(save);
+	if (FindAndSetSaveFile(SlotName)) {
 		GameLoaded.Broadcast();
 	}
-	else
-		UE_LOG(LogTemp, Error, TEXT("Error: Could not find an existing save game. - UProjGameInst::LoadGame"));
 }
 
-bool UProjGameInst::LoadSaveFileInfo(FString SaveSlotName, int& SaveDataValue)
+bool UProjGameInst::LoadSaveFileInfo(FString SlotName, int& SaveDataValue)
 {
-	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, SaveUserIndex)) {
-		USworderSaveGame* save = Cast<USworderSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, SaveUserIndex));
+	if (UGameplayStatics::DoesSaveGameExist(SlotName, SaveUserIndex)) {
+		USworderSaveGame* save = Cast<USworderSaveGame>(UGameplayStatics::LoadGameFromSlot(SlotName, SaveUserIndex));
 		if (save) {
 			SaveDataValue = save->GetPlayerGold();
 			return true;
@@ -209,4 +220,17 @@ bool UProjGameInst::LoadSaveFileInfo(FString SaveSlotName, int& SaveDataValue)
 	}
 	
 	return false;
+}
+
+void UProjGameInst::NewSave(const FString SlotName)
+{
+	if (FindAndSetSaveFile(SlotName))	{
+		SaveGameRef->ResetSaveGame();
+		GameLoaded.Broadcast();
+	}
+	else {
+		CreateSworderSaveGame(SlotName);
+	}
+
+	GameLoaded.Broadcast();
 }

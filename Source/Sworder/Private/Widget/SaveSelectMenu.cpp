@@ -27,20 +27,14 @@ void USaveSelectMenu::NativeConstruct()
 {
 	if (SaveSlot_1)
 	{
-		// Check for an existing save and set the value. If none exist set name to "New Save" and Data to be empty.
-		if (GetSaveFileInfo(SaveSlot_1, "SaveSlot_1")) {
-			// Should only be called if save file found
-			SaveSlot_1->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_1Clicked);
-		}
+		GetSaveFileInfo(SaveSlot_1, "SaveSlot_1");
+		SaveSlot_1->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_1Clicked);
 	}
 
 	if (SaveSlot_2)
 	{
-		// Check for an existing save and set the value. If none exist set name to "New Save" and Data to be empty.
-		if (GetSaveFileInfo(SaveSlot_2, "SaveSlot_2"))
-		{
-			SaveSlot_2->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_2Clicked);
-		}
+		GetSaveFileInfo(SaveSlot_2, "SaveSlot_2");
+		SaveSlot_2->SaveSlotButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnSaveSlot_2Clicked);
 	}
 }
 

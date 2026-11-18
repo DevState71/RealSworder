@@ -38,3 +38,8 @@ void USworderSaveGame::SetPlayerGold(int Gold)
 {
 	PlayerGold = Gold;
 }
+
+void USworderSaveGame::ResetSaveGame()
+{
+	SetPlayerGold(0);
+}

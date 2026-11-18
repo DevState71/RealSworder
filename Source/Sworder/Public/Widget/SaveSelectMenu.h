@@ -33,6 +33,6 @@ protected:
 	UFUNCTION()
 	void OnSaveSlot_2Clicked();
 
-
+	
 	virtual void HandleSaveSlotClicked(FString SaveSlotName);
 };

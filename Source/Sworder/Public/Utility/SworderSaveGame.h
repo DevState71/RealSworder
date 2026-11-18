@@ -29,4 +29,6 @@ public:
 	int GetPlayerGold();
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerGold(int Gold);
+
+	void ResetSaveGame();
 };

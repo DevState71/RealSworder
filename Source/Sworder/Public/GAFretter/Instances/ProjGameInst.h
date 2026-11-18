@@ -106,17 +106,16 @@ protected:
 	TSubclassOf<class USworderSaveGame> SworderSaveGameClass;
 	UPROPERTY(BlueprintReadOnly)
 	class USworderSaveGame* SaveGameRef;
-	UPROPERTY(EditDefaultsOnly)
-	FString SaveSlotName_1;
 
 	UPROPERTY(EditDefaultsOnly)
-	FString SaveSlotName_2;
+	FString SaveSlotName;
 
 	int32 SaveUserIndex;
 
 	
-	void SaveGame(bool bAsync, const FString SlotName);
+	void SaveGame(bool bAsync);
 	void SaveCompleted(const FString& SlotName, const int32 UserIndex, bool bSuccessful);
+	bool FindAndSetSaveFile(const FString SlotName);
 
 public:
 	FSaveDispatch GameSaved;
@@ -126,7 +125,7 @@ public:
 	void RequestSave(bool bAsync);
 
 	UFUNCTION(BlueprintCallable)
-	void CreateSworderSaveGame();
+	void CreateSworderSaveGame(const FString SlotName);
 
 	UFUNCTION(BlueprintCallable)
 	void LoadGame(const FString SlotName);
@@ -135,6 +134,9 @@ public:
 	void LoadActorsData(AActor* Actor);
 
 	// Used to return save information for the Save Select Menu
-	bool LoadSaveFileInfo(FString SaveSlotName, int& SaveDataValue);
+	bool LoadSaveFileInfo(FString SlotName, int& SaveDataValue);
+
+	// Reset all varaibles in a save slot, allowing it to be used for a new game.
+	void NewSave(const FString SlotName);
 
 };

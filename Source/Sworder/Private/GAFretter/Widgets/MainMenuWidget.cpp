@@ -31,15 +31,10 @@ void UMainMenuWidget::NativeConstruct()
 
 void UMainMenuWidget::OnContinueClicked()
 {
-	//if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-	//	GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
-	//	GameInst->LoadGame("SaveSlot_1");													// Update hard coded Save Slot Name
-	//}
-
-	if (SaveSlotMenuClass) {
-		UUserWidget* SaveSelectMenu = CreateWidget<UUserWidget>(GetOwningPlayer(), SaveSlotMenuClass);
-		if (SaveSelectMenu) {
-			SaveSelectMenu->AddToViewport(101);
+	if (ContinueGameMenuClass) {
+		UUserWidget* ContinueGameMenu = CreateWidget<UUserWidget>(GetOwningPlayer(), ContinueGameMenuClass);
+		if (ContinueGameMenu) {
+			ContinueGameMenu->AddToViewport(101);
 		}
 	}
 }
@@ -47,9 +42,16 @@ void UMainMenuWidget::OnContinueClicked()
 // Get our custom Game Instance to load the first level
 void UMainMenuWidget::OnPlayClicked() 
 { 
-	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-		GameInst->CreateSworderSaveGame();
-		GameInst->LoadFirstLevel();
+	//if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
+	//	GameInst->CreateSworderSaveGame();
+	//	GameInst->LoadFirstLevel();
+	//}
+
+	if (NewGameMenuClass) {
+		UUserWidget* NewGameMenu = CreateWidget<UUserWidget>(GetOwningPlayer(), NewGameMenuClass);
+		if (NewGameMenu) {
+			NewGameMenu->AddToViewport(101);
+		}
 	}
 }
 

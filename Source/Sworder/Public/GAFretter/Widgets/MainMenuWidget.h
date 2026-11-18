@@ -52,7 +52,10 @@ protected:
 
 	// ---------------------------- Save Slot Widget ----------------------------
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> SaveSlotMenuClass;
+	TSubclassOf<class UUserWidget> ContinueGameMenuClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UUserWidget> NewGameMenuClass;
 
 
 private:
