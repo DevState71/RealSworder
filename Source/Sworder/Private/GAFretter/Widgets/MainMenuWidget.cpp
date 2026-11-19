@@ -29,12 +29,29 @@ void UMainMenuWidget::NativeConstruct()
 	if (OptionsButton) OptionsButton->OnButtonClicked.AddDynamic(this, &UMainMenuWidget::OnOptionsClicked);
 }
 
+
+void UMainMenuWidget::ShowSubMenu(UUserWidget* Widget)
+{
+	if (Widget) {
+		Widget->AddToViewport(101);
+		ToggleMenuButtonVisibility(false);
+	}
+}
+
+void UMainMenuWidget::OnSubMenuRemoved()
+{
+	ToggleMenuButtonVisibility(true);
+}
+
 void UMainMenuWidget::OnContinueClicked()
 {
 	if (ContinueGameMenuClass) {
-		UUserWidget* ContinueGameMenu = CreateWidget<UUserWidget>(GetOwningPlayer(), ContinueGameMenuClass);
+		USaveSelectMenu* ContinueGameMenu = CreateWidget<USaveSelectMenu>(GetOwningPlayer(), ContinueGameMenuClass);
 		if (ContinueGameMenu) {
-			ContinueGameMenu->AddToViewport(101);
+			//ContinueGameMenu->AddToViewport(101);
+			ShowSubMenu(ContinueGameMenu);
+			ContinueGameMenu->WidgetRemoved.AddUniqueDynamic(this, &UMainMenuWidget::OnSubMenuRemoved);
+
 		}
 	}
 }
@@ -42,15 +59,12 @@ void UMainMenuWidget::OnContinueClicked()
 // Get our custom Game Instance to load the first level
 void UMainMenuWidget::OnPlayClicked() 
 { 
-	//if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-	//	GameInst->CreateSworderSaveGame();
-	//	GameInst->LoadFirstLevel();
-	//}
-
 	if (NewGameMenuClass) {
-		UUserWidget* NewGameMenu = CreateWidget<UUserWidget>(GetOwningPlayer(), NewGameMenuClass);
+		USaveSelectMenu* NewGameMenu = CreateWidget<USaveSelectMenu>(GetOwningPlayer(), NewGameMenuClass);
 		if (NewGameMenu) {
-			NewGameMenu->AddToViewport(101);
+			//NewGameMenu->AddToViewport(101);
+			ShowSubMenu(NewGameMenu);
+			NewGameMenu->WidgetRemoved.AddUniqueDynamic(this, &UMainMenuWidget::OnSubMenuRemoved);
 		}
 	}
 }

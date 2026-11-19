@@ -9,6 +9,8 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWidgetDelegate);
+
 UCLASS()
 class SWORDER_API USaveSelectMenu : public UUserWidget
 {
@@ -24,6 +26,8 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UBaseSaveSlot* SaveSlot_2;
 
+	UPROPERTY(meta = (BindWidget))
+	class UButtonWithText* BackButton;
 
 	virtual void SetUpSaveSlot(class UBaseSaveSlot* SaveSlot);
 
@@ -31,5 +35,11 @@ protected:
 
 	UFUNCTION()
 	virtual void HandleSaveSlotClicked(FString SaveSlotName);
+
+	UFUNCTION()
+	void OnBackClicked();
+
+public:
+	FWidgetDelegate WidgetRemoved;
 
 };

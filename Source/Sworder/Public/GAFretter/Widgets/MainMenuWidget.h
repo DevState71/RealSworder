@@ -52,10 +52,17 @@ protected:
 
 	// ---------------------------- Save Slot Widget ----------------------------
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> ContinueGameMenuClass;
+	TSubclassOf<class USaveSelectMenu> ContinueGameMenuClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> NewGameMenuClass;
+	TSubclassOf<class USaveSelectMenu> NewGameMenuClass;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ToggleMenuButtonVisibility(bool bIsVisible);
+
+	void ShowSubMenu(UUserWidget* Widget);
+	UFUNCTION()
+	void OnSubMenuRemoved();
 
 
 private:

@@ -10,6 +10,8 @@
 
 void UContinueSaveSelectMenu::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	if (SaveSlot_1)
 	{
 		SetUpSaveSlot(SaveSlot_1);

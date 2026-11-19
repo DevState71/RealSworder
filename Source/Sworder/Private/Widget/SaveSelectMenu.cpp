@@ -5,11 +5,15 @@
 
 #include "Widget/BaseSaveSlot.h"
 #include "GAFretter/Instances/ProjGameInst.h"
-//#include "Kismet/GameplayStatics.h"
+#include "GAFretter/Widgets/ButtonWithText.h"
 
 
 void USaveSelectMenu::NativePreConstruct()
 {
+	if (BackButton) {
+		BackButton->SetButtonText(FText::FromString("Back"));
+	}
+
 	if (SaveSlot_1) {
 		SaveSlot_1->SetSaveSlotNameText(FText::FromString("Save Slot 1"));
 		SaveSlot_1->SetSaveSlotName("Save Slot 1");
@@ -27,7 +31,8 @@ void USaveSelectMenu::NativePreConstruct()
 
 void USaveSelectMenu::NativeConstruct()
 {
-
+	if (BackButton)
+		BackButton->OnButtonClicked.AddDynamic(this, &USaveSelectMenu::OnBackClicked);
 }
 
 void USaveSelectMenu::SetUpSaveSlot(class UBaseSaveSlot* SaveSlot)
@@ -59,3 +64,8 @@ void USaveSelectMenu::HandleSaveSlotClicked(FString SaveSlotName)
 	// Defined in child classes
 }
 
+void USaveSelectMenu::OnBackClicked()
+{
+	WidgetRemoved.Broadcast();
+	this->RemoveFromParent();
+}
