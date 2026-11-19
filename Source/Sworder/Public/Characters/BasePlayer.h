@@ -109,6 +109,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	class UInputMappingContext* DefaultInputMappingContext;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
+	class UInputAction* Input_Pause;
+
+	void InputPause(const struct FInputActionValue& Value);
+
 	// Movement
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enhanced Input")
 	class UInputAction* Input_Move;
@@ -132,6 +137,10 @@ protected:
 	void Attack();
 
 	// ----------------------------------------------------------------------------------- Inputs End -----------------------------------------------------------------------------------
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> PauseMenuClass;
+
 
 	void SaveData_Implementation(class USworderSaveGame* SaveGameRef) override;
 	void LoadData_Implementation(class USworderSaveGame* SaveGameRef) override;

@@ -68,6 +68,9 @@ void UPauseMenuWidget::OnQuitClicked()
 			APlayerController* PC = GetOwningPlayer();
 			if (PC) PC->SetPause(false);
 
+			// Save game before moving to main menu
+			GameInst->RequestSave(false);
+
 			// Execute the transition to Index 0 (CodeMenuMap)
 			GameInst->LoadLevelSafe(0);
 		}

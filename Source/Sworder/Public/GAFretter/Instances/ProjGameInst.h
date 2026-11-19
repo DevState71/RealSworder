@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
 #include "Engine/Texture2D.h"
+#include "Utility/Persistence.h"
 #include "ProjGameInst.generated.h"
 
 class USoundMix;
@@ -33,7 +34,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSaveDispatch);
  * 
  */
 UCLASS()
-class SWORDER_API UProjGameInst : public UGameInstance
+class SWORDER_API UProjGameInst : public UGameInstance, public IPersistence
 {
 	GENERATED_BODY()
 	

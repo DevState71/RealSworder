@@ -27,7 +27,7 @@ void UContinueSaveSelectMenu::NativeConstruct()
 void UContinueSaveSelectMenu::HandleSaveSlotClicked(FString SaveSlotName)
 {
 	if (UProjGameInst* GameInst = Cast<UProjGameInst>(GetGameInstance())) {
-		GameInst->GameLoaded.AddDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
+		GameInst->GameLoaded.AddUniqueDynamic(GameInst, &UProjGameInst::LoadFirstLevel);
 		GameInst->LoadGame(SaveSlotName);
 	}
 

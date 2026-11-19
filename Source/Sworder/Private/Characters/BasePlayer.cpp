@@ -18,6 +18,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utility/SworderSaveGame.h"
+#include "GAFretter/Widgets/PauseMenuWidget.h"
 
 
 
@@ -173,8 +174,22 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		enhancedInputComponent->BindAction(Input_Move, ETriggerEvent::Triggered, this, &ABasePlayer::InputMove);
 		enhancedInputComponent->BindAction(Input_Look, ETriggerEvent::Triggered, this, &ABasePlayer::InputLook);
 		enhancedInputComponent->BindAction(Input_Attack, ETriggerEvent::Triggered, this, &ABasePlayer::InputAttack);
+		enhancedInputComponent->BindAction(Input_Pause, ETriggerEvent::Triggered, this, &ABasePlayer::InputPause);
 	}
 
+}
+
+void ABasePlayer::InputPause(const FInputActionValue& Value)
+{
+	APlayerController* playerController = Cast<APlayerController>(GetController());
+	if (PauseMenuClass && playerController) {
+		UUserWidget* pauseMenu = CreateWidget<UUserWidget>(playerController, PauseMenuClass);
+		if (pauseMenu) {
+			pauseMenu->AddToViewport();
+			playerController->SetPause(true);
+		}
+		
+	}
 }
 
 void ABasePlayer::InputMove(const FInputActionValue& Value)

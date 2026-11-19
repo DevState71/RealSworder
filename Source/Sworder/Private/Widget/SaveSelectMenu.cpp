@@ -32,7 +32,7 @@ void USaveSelectMenu::NativePreConstruct()
 void USaveSelectMenu::NativeConstruct()
 {
 	if (BackButton)
-		BackButton->OnButtonClicked.AddDynamic(this, &USaveSelectMenu::OnBackClicked);
+		BackButton->OnButtonClicked.AddUniqueDynamic(this, &USaveSelectMenu::OnBackClicked);
 }
 
 void USaveSelectMenu::SetUpSaveSlot(class UBaseSaveSlot* SaveSlot)
