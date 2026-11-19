@@ -13,7 +13,7 @@ void UMainMenuWidget::NativePreConstruct()
 	if (MenuMusic) PlaySound(MenuMusic);
 
 	if (ContinueButton) ContinueButton->SetButtonText(FText::FromString("Continue"));
-	if (PlayButton) PlayButton->SetButtonText(FText::FromString("Play"));
+	if (PlayButton) PlayButton->SetButtonText(FText::FromString("New Game"));
 	if (QuitButton) QuitButton->SetButtonText(FText::FromString("Quit"));
 	if (OptionsButton) OptionsButton->SetButtonText(FText::FromString("Options"));
 }
